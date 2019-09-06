@@ -6,13 +6,21 @@
       {% if registered %}
         <h1>Thank you for registering!</h1>
       {% else %}
-        <h1>Register Here</h1>
-        <h3>Just fill out the form.</h3>
-        <form enctype="multipart/form-data" method="POST">
-          {% csrf_token %}
-          {{ user_form.as_p }}
-          {{ profile_form.as_p }}
-          <input type="submit" name="" value="Register">
+        <h1>Registrate Aqui</h1>
+        <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+          {% for field in user_form %}
+            <p>
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+              {{field}}
+            </p>
+          {% endfor %}
+          {% for field in profile_form %}
+            <p>
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+              {{field}}
+            </p>
+          {% endfor %}
+          <input type="submit" class="btn-lg btn btn-primary" name="" value="Registrar">
         </form>
         
       {% endif %}

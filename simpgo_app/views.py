@@ -23,7 +23,7 @@ def user_login(request):
 				return HttpResponse("Your account was inactive.")
 		else:
 			print("Someone tried to login and failed.")
-			return HttpResponse("Invalid login details given")
+			return HttpResponse("¡Usuario o Clave Invalida!")
 	else:
 		return render(request, 'simpgo_app/login.html', {})
 

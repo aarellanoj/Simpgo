@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from simpgo_app import views
 
 urlpatterns = [
-	path('index/', include('simpgo_app.urls')),
+    path('', include('simpgo_app.urls')),
+    path('logout/', views.user_logout, name='logout'),
     path('admin/', admin.site.urls),
 ]

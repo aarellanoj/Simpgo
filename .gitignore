@@ -1,1 +1,3 @@
-simpgo_app/migrations/*
+simpgo_app/migrations/
+*.pyc
+

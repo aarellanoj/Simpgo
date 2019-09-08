@@ -184,7 +184,7 @@ class Profile(models.Model):
         verbose_name="Rango en el Sistema",
     )
 
-    avatar = models.CharField(
+    avatar = models.ImageField(
         "Imagen del Perfil",
         max_length=250,
         null=True,
@@ -193,22 +193,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

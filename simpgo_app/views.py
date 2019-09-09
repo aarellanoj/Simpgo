@@ -20,9 +20,8 @@ def user_login(request):
 				login(request,user)
 				return HttpResponseRedirect(reverse('index'))
 			else:
-				return HttpResponse("Your account was inactive.")
+				return HttpResponse("Su Cuenta Fue Desactivada.")
 		else:
-			print("Someone tried to login and failed.")
 			return HttpResponse("¡Usuario o Clave Invalida!")
 	else:
 		return render(request, 'simpgo_app/login.html', {})

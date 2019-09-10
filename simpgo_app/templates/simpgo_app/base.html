@@ -15,8 +15,10 @@
                 <li><a class="navbar-brand" href="{% url 'index' %}">Simpgo</a></li>
                 {% if user.is_staff and user.is_authenticated %}
                     <li><a class="navbar-link" href="{% url 'admin:index' %}">Admin</a></li>
+                    <li><a class="navbar-link" href="{% url 'create_ticket' %}">Crear Ticket</a></li>
                     <li><a href="{% url 'logout' %}">Log out</a></li>
                 {% elif user.is_authenticated %}
+                    <li><a class="navbar-link" href="{% url 'create_ticket' %}">Crear Ticket</a></li>
                     <li><a href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li><a class="navbar-link" href="{% url 'register' %}">Registrar</a></li>
@@ -27,6 +29,10 @@
     </nav>
     <div class="container">
         {% block body_block %}
+        {% endblock %}
+    </div>
+    <div class="container">
+        {% block body_body %}
         {% endblock %}
     </div>
   </body>

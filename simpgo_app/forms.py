@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
-from .models import Profile
+from .models import Profile, Ticket
 
 #Class Forms
 class UserForm(forms.ModelForm):
@@ -36,3 +36,14 @@ class ProfileForm(forms.ModelForm):
             'job_title': forms.Select(attrs={'class':'form-control'}),
             'rank': forms.Select(attrs={'class':'form-control'}),
          }
+
+class TicketForm(forms.ModelForm):
+    class Meta():
+        model = Ticket
+        fields = ('title','content','priority', 'image_file')
+
+        widgets = {
+            'title':forms.TextInput(attrs={'class':'form-control'}),
+            'content': forms.Textarea(attrs={'class':'form-control'}),
+            'priority': forms.Select(attrs={'class':'form-control'}),
+        }

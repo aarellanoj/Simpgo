@@ -4,7 +4,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from simpgo_app.forms import UserForm, ProfileForm
+from simpgo_app.forms import UserForm, ProfileForm, TicketForm
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -54,3 +55,17 @@ def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('index'))
 
+@login_required
+def create_ticket(request):
+    if request.method == 'POST':
+        print(request.user.id)
+        type(request.user.id)
+        ticket_form = TicketForm(data=request.POST)
+        if ticket_form.is_valid():
+            ticket = ticket_form.save(commit=False)
+            ticket.created_by = request.user
+            ticket.save()
+    else:
+        ticket_form = TicketForm()
+    
+    return render(request,'simpgo_app/create_ticket.html',{'ticket_form':ticket_form})

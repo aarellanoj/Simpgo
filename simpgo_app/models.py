@@ -95,6 +95,16 @@ class Department(models.Model):
 class Ticket_Actions(models.Model):
     """Comments"""
 
+    TICKET_ACTIONS = (
+        (1,'Abierto'),
+        (2,'En Proceso'),
+        (3,'Cerrado'),
+        (4,'Re-Abierto'),
+        (5,'Esperando por Información'),
+        (6,'Asignado'),
+        (7,'Reclamado'),
+    )
+
     ticket = models.ForeignKey(
         Ticket,
         on_delete=models.CASCADE,
@@ -109,30 +119,12 @@ class Ticket_Actions(models.Model):
 
     date = models.DateTimeField(
         "Fecha de la Acción",
+        auto_now_add=True,
     )
 
-    claimed = models.BooleanField(
-        "¿Reclamado?",
-        null=True,
-        default=False,
-    )
-
-    assigned = models.BooleanField(
-        "¿Asignado?",
-        null=True,
-        default=False,
-    )
-
-    closed = models.BooleanField(
-        "¿Cerrado?",
-        null=True,
-        default=False,
-    )
-
-    re_opened = models.BooleanField(
-        "¿Re-Abierto?",
-        null=True,
-        default=False,
+    action = models.IntegerField(
+        "Acción del Ticket",
+        choices=TICKET_ACTIONS,
     )
 
     class Meta:
@@ -225,4 +217,31 @@ class Subscribe(models.Model):
         verbose_name_plural = "Subscribers"
 
     def __str__(self):
-        return self.user.get_full_name()
+        return self.user.get_full_name() + " - " + self.ticket.title
+
+class Response(models.Model):
+    """Comments"""
+
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.CASCADE,
+        verbose_name="Ticket Asociado",
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Usuario que Responde",
+    )
+
+    response = models.TextField(
+        "Contenido de la Respuesta",
+        max_length=1000,
+    )
+
+    image_file = models.ImageField(
+        "Imagen",
+        max_length=250,
+        null=True,
+        blank=True,
+    )

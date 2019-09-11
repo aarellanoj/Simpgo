@@ -1,11 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm
-from django.utils import timezone
+
+from simpgo_app.models import Ticket
+
+#Others Functions
+
 
 # Create your views here.
 def index(request):
@@ -58,14 +62,18 @@ def user_logout(request):
 @login_required
 def create_ticket(request):
     if request.method == 'POST':
-        print(request.user.id)
-        type(request.user.id)
         ticket_form = TicketForm(data=request.POST)
         if ticket_form.is_valid():
             ticket = ticket_form.save(commit=False)
             ticket.created_by = request.user
             ticket.save()
+            return redirect('/ticket-view/' + str(ticket.id))
     else:
         ticket_form = TicketForm()
     
     return render(request,'simpgo_app/create_ticket.html',{'ticket_form':ticket_form})
+
+@login_required
+def ticket_view(request, ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    return HttpResponse("<h1>Que es lo que es " + str(ticket.created_by.first_name))

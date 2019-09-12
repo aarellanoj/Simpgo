@@ -67,7 +67,7 @@ def create_ticket(request):
             ticket = ticket_form.save(commit=False)
             ticket.created_by = request.user
             ticket.save()
-            return redirect('/ticket-view/' + str(ticket.id))
+            return HttpResponseRedirect('/ticket-view/' + str(ticket.id))
     else:
         ticket_form = TicketForm()
     
@@ -76,4 +76,4 @@ def create_ticket(request):
 @login_required
 def ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
-    return HttpResponse("<h1>Que es lo que es " + str(ticket.created_by.first_name))
+    return render(request, 'simpgo_app/ticket_view.html',{'ticket':ticket})

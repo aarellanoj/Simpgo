@@ -16,9 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from simpgo_app import views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('', include('simpgo_app.urls')),
     path('logout/', views.user_logout, name='logout'),
     path('admin/', admin.site.urls),
 ]
+
+#Dejar en el Final
+urlpatterns += staticfiles_urlpatterns()

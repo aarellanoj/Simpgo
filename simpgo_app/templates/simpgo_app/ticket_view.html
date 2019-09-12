@@ -1,0 +1,16 @@
+{% extends "simpgo_app/base.html" %}
+{% block body_block %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1> Ticket #{{ticket.id}} </h1>
+            <h3> Asunto:  {{ticket.title}} </h3>
+            <h3> Fecha: {{ticket.created}} </h3>
+
+        </div>
+    </div>
+{% endblock%}
+{% block body_body %}
+    <div class="container">
+        <p>{{ticket.content}}</p>
+    </div>
+{% endblock %}

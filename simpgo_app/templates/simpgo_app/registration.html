@@ -1,5 +1,17 @@
 {% extends "simpgo_app/base.html" %}
 {% load staticfiles %}
+{% block after_nav %}
+  <section class="hero is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Registro
+        </h1>
+          <h2 class="subtitle">Simple Django Helpdesk</h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
 {% block body_block %}
   <div class="container" style=" padding:2em;">
     <div class="columns">

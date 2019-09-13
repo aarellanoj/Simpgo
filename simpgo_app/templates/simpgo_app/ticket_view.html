@@ -1,17 +1,29 @@
 {% extends "simpgo_app/base.html" %}
+{% block after_nav %}
+  <section class="hero is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            {{ ticket.title }}
+        </h1>
+          <h2 class="subtitle">Ticket #{{ticket.id}} </h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
 {% block body_block %}
     <div class="container box" style="padding:2em; margin-top: 2em;">
         <nav class="level">
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Creado Por</p>
-              <p class="title">{{ticket.created_by.get_full_name}}</p>
+              <p class="title">{{ticket.created_by.username}}</p>
             </div>
           </div>
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Estatus</p>
-              <p class="title">Abierto</p>
+              <p class="title">{{ticket.get_status_display}}</p>
             </div>
           </div>
           <div class="level-item has-text-centered">
@@ -22,7 +34,7 @@
           </div>
           <div class="level-item has-text-centered">
             <div>
-              <p class="heading">Fecha</p>
+              <p class="heading">Fecha de Creación</p>
               <p class="title">{{ticket.created}}</p>
             </div>
           </div>
@@ -30,7 +42,43 @@
     </div>
 {% endblock%}
 {% block body_body %}
-    <div class="container">
-        <p>{{ticket.content}}</p>
+<br>
+<article class="media">
+    <figure class="media-left">
+      <p class="image is-64x64">
+        <img src="https://bulma.io/images/placeholders/128x128.png">
+      </p>
+    </figure>
+    <div class="media-content">
+      <div class="content">
+        <p>
+          <strong>{{ticket.created_by.get_full_name}}</strong>
+          <br>
+          {{ticket.content}}
+          <br>
+          <small><a>Like</a> · <a>Reply</a> · 3 hrs</small>
+        </p>
+      </div>
+
     </div>
+  </article>
+  <article class="media">
+    <figure class="media-left">
+      <p class="image is-64x64">
+        <img src="https://bulma.io/images/placeholders/128x128.png">
+      </p>
+    </figure>
+    <div class="media-content">
+      <div class="field">
+        <p class="control">
+          <textarea class="textarea" placeholder="Add a comment..."></textarea>
+        </p>
+      </div>
+      <div class="field">
+        <p class="control">
+          <button class="button">Post comment</button>
+        </p>
+      </div>
+    </div>
+  </article>
 {% endblock %}

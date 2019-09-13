@@ -1,13 +1,17 @@
 {% extends "simpgo_app/base.html" %}
-{% block body_block %}
-<div class="container">
-  <div class="jumbotron">
-    <h1>Welcome to the Djungle !</h1>
-    {% if user.is_authenticated %}
-        <h2>Que es lo que es {{ user.get_full_name }}</h2>
-    {% else %}
-        <h2>¡Registrate o Logeate!</h2>
-    {% endif %}
-  </div>
-</div>
+{% block after_nav %}
+  <section class="hero is-light">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Welcome to the Djungle !
+          </h1>
+          {% if user.is_authenticated %}
+            <h2 class="subtitle">Que es lo que es {{ user.get_full_name }}</h2>
+          {% else %}
+            <h2 class="subtitle">¡Registrate o Logeate!</h2>
+          {% endif %}
+        </div>
+      </div>
+  </section>
 {% endblock %}

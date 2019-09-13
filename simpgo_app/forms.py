@@ -43,7 +43,8 @@ class TicketForm(forms.ModelForm):
         fields = ('title','content','priority', 'image_file')
 
         widgets = {
-            'title':forms.TextInput(attrs={'class':'form-control'}),
-            'content': forms.Textarea(attrs={'class':'form-control'}),
-            'priority': forms.Select(attrs={'class':'form-control'}),
+            'title':forms.TextInput(attrs={'class':'input','placeholder':'Asunto del Ticket'}),
+            'content': forms.Textarea(attrs={'class':'textarea','placeholder':'Contenido del Ticket'}),
+            'priority': forms.Select(),
+            'image_file': forms.FileInput(attrs={'class':'file-input'}),
         }

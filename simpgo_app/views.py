@@ -2,14 +2,21 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
+from django.core.exceptions import PermissionDenied
+
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm
 
 from simpgo_app.models import Ticket
 
 #Others Functions
 
+def is_myticket(user,ticket):
+    if user.is_superuser or user.is_staff or user.id == ticket.created_by.id:
+        return True
+    else:
+        return False
 
 # Create your views here.
 def index(request):
@@ -71,9 +78,12 @@ def create_ticket(request):
     else:
         ticket_form = TicketForm()
     
-    return render(request,'simpgo_app/create_ticket.html',{'ticket_form':ticket_form})
+    return render(request,'simpgo_app/create_ticket.html',{'ticket_form':ticket_form,})
 
 @login_required
 def ticket_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, pk=ticket_id)
+    if not is_myticket(request.user, ticket):
+        raise PermissionDenied()
     return render(request, 'simpgo_app/ticket_view.html',{'ticket':ticket})
+

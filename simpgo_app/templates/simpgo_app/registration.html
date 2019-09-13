@@ -1,28 +1,33 @@
 {% extends "simpgo_app/base.html" %}
 {% load staticfiles %}
 {% block body_block %}
-  <div class="container">
-    <div class="jumbotron">
+  <div class="container" style=" padding:2em;">
+    <div class="columns">
       {% if registered %}
-        <h1>Thank you for registering!</h1>
+        <h1 class="title is-1">Thank you for registering!</h1>
       {% else %}
-        <h1>Registrate Aqui</h1>
+      <div class="column is-6 is-offset-3 box">
         <form enctype="multipart/form-data" method="POST">{% csrf_token %}
           {% for field in user_form %}
-            <p>
-              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            <div class="field">
+              <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
               {{field}}
-            </p>
+            </div>
           {% endfor %}
           {% for field in profile_form %}
-            <p>
-              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-              {{field}}
-            </p>
+            <div class="field">
+              <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                <div class="select is-fullwidth">
+                  {{field}}
+              </div>
+            </div>
           {% endfor %}
-          <input type="submit" class="btn-lg btn btn-primary" name="" value="Registrar">
+          <hr>
+          <div class="control">
+              <input type="submit" class="button is-success is-fullwidth" name="" value="Registrar">
+          </div>
         </form>
-        
+      
       {% endif %}
     </div>
   </div>

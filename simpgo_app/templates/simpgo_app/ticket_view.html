@@ -1,12 +1,32 @@
 {% extends "simpgo_app/base.html" %}
 {% block body_block %}
-    <div class="container">
-        <div class="jumbotron">
-            <h1> Ticket #{{ticket.id}} </h1>
-            <h3> Asunto:  {{ticket.title}} </h3>
-            <h3> Fecha: {{ticket.created}} </h3>
-
-        </div>
+    <div class="container box" style="padding:2em; margin-top: 2em;">
+        <nav class="level">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Creado Por</p>
+              <p class="title">{{ticket.created_by.get_full_name}}</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Estatus</p>
+              <p class="title">Abierto</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Asignado a</p>
+              <p class="title">Alex Arellano</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Fecha</p>
+              <p class="title">{{ticket.created}}</p>
+            </div>
+          </div>
+        </nav>
     </div>
 {% endblock%}
 {% block body_body %}

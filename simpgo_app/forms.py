@@ -11,11 +11,11 @@ class UserForm(forms.ModelForm):
         fields = ('username','first_name','last_name','password','email')
 
         widgets = {
-            'username': forms.TextInput(attrs={'class':'form-control'}),
-            'first_name': forms.TextInput(attrs={'class':'form-control'}),
-            'last_name': forms.TextInput(attrs={'class':'form-control'}),
-            'password': forms.PasswordInput(attrs={'class':'form-control'}),
-            'email': forms.EmailInput(attrs={'class':'form-control'}),
+            'username': forms.TextInput(attrs={'class':'input'}),
+            'first_name': forms.TextInput(attrs={'class':'input'}),
+            'last_name': forms.TextInput(attrs={'class':'input'}),
+            'password': forms.PasswordInput(attrs={'class':'input'}),
+            'email': forms.EmailInput(attrs={'class':'input'}),
         }
 
         labels = {
@@ -32,9 +32,9 @@ class ProfileForm(forms.ModelForm):
          fields = ('department','job_title','rank')
 
          widgets = {
-            'department': forms.Select(attrs={'class':'form-control'}),
-            'job_title': forms.Select(attrs={'class':'form-control'}),
-            'rank': forms.Select(attrs={'class':'form-control'}),
+            'department': forms.Select(),
+            'job_title': forms.Select(),
+            'rank': forms.Select(),
          }
 
 class TicketForm(forms.ModelForm):

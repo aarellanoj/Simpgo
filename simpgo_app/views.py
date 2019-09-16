@@ -113,7 +113,14 @@ def my_tickets(request):
     tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3],deleted=0))
 
     if request.method == 'POST':
-        print(request.POST)
+
+        if request.POST.get('ticket_id') is not None:
+            for ids in request.POST.getlist('ticket_id'):
+                Ticket.objects.get(id=ids)._remove()
+        else:
+            for ids in request.POST.getlist('ticket_id2'):
+                Ticket.objects.get(id=ids)._remove()
+
         return HttpResponseRedirect('./')
 
     return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets, 'tickets_pro':tickets_pro})

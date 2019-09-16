@@ -90,7 +90,7 @@
     <hr>
   {% endfor %}
   <!-- Fin Respuestas al Comentario -->
-
+{% if user.is_staff %}
 <!-- Comentario Form -->
   <article class="media">
     <figure class="media-left">
@@ -114,5 +114,6 @@
     </div>
   </article>
   <br>
+{% endif %}
 <!-- Fin Comentario Form -->
 {% endblock %}

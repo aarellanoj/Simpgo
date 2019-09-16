@@ -12,8 +12,7 @@ class Ticket(models.Model):
         (1,'Abierto'),
         (2,'En Proceso'),
         (3,'Cerrado'),
-        (4,'Re-Abierto'),
-        (5,'Esperando por Información'),
+        (4,'Rechazado'),
     )
 
     TICKET_PRIORITY = (
@@ -72,6 +71,7 @@ class Ticket(models.Model):
 
     def _remove(self,*args, **kwargs):
         self.deleted = True
+        self.status = 3
         return super(Ticket, self).save(*args,**kwargs)
 
     def __str__(self):

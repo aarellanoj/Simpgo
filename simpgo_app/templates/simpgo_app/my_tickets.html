@@ -32,6 +32,7 @@
 {% block body_body %}
   {% if user.is_authenticated %}
     <div class="container" style="padding:3em;">
+      {% if tickets_pro %}
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
           <center>
@@ -70,6 +71,9 @@
         </div>
       </div>
       <br>
+      {% endif %}
+
+      {% if tickets %}
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
           <center>
@@ -107,6 +111,7 @@
           </center>
         </div>
       </div>
+      {% endif %}
     </div>
   {% endif %}
 {% endblock %}

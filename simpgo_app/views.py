@@ -108,6 +108,13 @@ def ticket_view(request, ticket_id):
     
 @login_required
 def my_tickets(request):
-    tickets = list(Ticket.objects.filter(created_by=request.user.id))
-    return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets})
+
+    tickets = list(Ticket.objects.filter(created_by=request.user.id,status__in=[1],deleted=0))
+    tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3],deleted=0))
+
+    if request.method == 'POST':
+        print(request.POST)
+        return HttpResponseRedirect('./')
+
+    return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets, 'tickets_pro':tickets_pro})
 

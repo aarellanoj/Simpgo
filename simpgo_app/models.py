@@ -61,14 +61,18 @@ class Ticket(models.Model):
         blank=True,
     )
 
-    delete = models.BooleanField(
+    deleted = models.BooleanField(
         "Eliminar Ticket",
         default=False,
     )
 
-    def _change_status_to(self,new_status):
+    def _change_status_to(self,new_status,*args, **kwargs):
         self.status = new_status
-        return super(Ticket, self).save(*args, **kwargs)
+        return super(Ticket, self).save(*args,**kwargs)
+
+    def _remove(self,*args, **kwargs):
+        self.deleted = True
+        return super(Ticket, self).save(*args,**kwargs)
 
     def __str__(self):
         return self.title

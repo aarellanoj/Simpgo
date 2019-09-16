@@ -1,5 +1,22 @@
 {% extends "simpgo_app/base.html" %}
 {% load humanize %}
+{% block helpdesk_head %}
+  <script language="JavaScript">
+    function toggle(source) {
+      checkboxes = document.getElementsByName('ticket_id');
+      for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
+
+    function toggle2(source) {
+      checkboxes = document.getElementsByName('ticket_id2');
+      for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
+  </script>
+{% endblock %}
 {% block after_nav %}
   <section class="hero is-light">
     <div class="hero-body">
@@ -18,29 +35,75 @@
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
           <center>
-            <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-              <thead>
-                <tr class="">
-                  <th><abbr title="Position">ID</abbr></th>
-                  <th>Titulo</th>
-                  <th><abbr title="Played">Prioridad</abbr></th>
-                  <th><abbr title="Drawn">Creado</abbr></th>
-                  <th><abbr title="Lost">Estatus</abbr></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for ticket in tickets %}
-                  <tr>
-                    <th>{{ticket.id}}</th>
-                    <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> 
-                    </td>
-                    <td>{{ticket.get_priority_display}}</td>
-                    <td>{{ticket.created|naturaltime}}</td>
-                    <td>{{ticket.get_status_display}}</td>
+            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+              <p class="title" align="center">Solicitudes Procesadas</p>
+              <hr>
+              <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <th><input type="checkbox" onClick="toggle(this)"/></th>
+                    <th><abbr title="Position">ID</abbr></th>
+                    <th>Titulo</th>
+                    <th><abbr title="Played">Prioridad</abbr></th>
+                    <th><abbr title="Drawn">Creado</abbr></th>
+                    <th><abbr title="Lost">Estatus</abbr></th>
                   </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {% for ticket in tickets_pro %}
+                    <tr>
+                      <td><input name='ticket_id' value='{{ ticket.id }}' type="checkbox"></td>
+                      <th>{{ticket.id}}</th>
+                      <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
+                      <td>{{ticket.get_priority_display}}</td>
+                      <td>{{ticket.created|naturaltime}}</td>
+                      <td>{{ticket.get_status_display}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="control">
+                  <input type="submit" class="button is-dark" name="remove" value="Eliminar de Bandeja">
+              </div>
+            </form>
+          </center>
+        </div>
+      </div>
+      <br>
+      <div class="columns">
+        <div class="column is-8 is-offset-2 box">
+          <center>
+            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+                <p class="title" align="center">Solicitudes Pendientes</p>
+                <hr>
+              <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <th><input type="checkbox" onClick="toggle2(this)"/></th>
+                    <th><abbr title="Position">ID</abbr></th>
+                    <th>Titulo</th>
+                    <th><abbr title="Played">Prioridad</abbr></th>
+                    <th><abbr title="Drawn">Creado</abbr></th>
+                    <th><abbr title="Lost">Estatus</abbr></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ticket in tickets %}
+                    <tr>
+                      <td><input name='ticket_id2' value='{{ ticket.id }}' type="checkbox"></td>
+                      <th>{{ticket.id}}</th>
+                      <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
+                      <td>{{ticket.get_priority_display}}</td>
+                      <td>{{ticket.created|naturaltime}}</td>
+                      <td>{{ticket.get_status_display}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="control">
+                  <input type="submit" class="button is-dark" name="cancel" value="Cancelar Ticket">
+              </div>
+            </form>
           </center>
         </div>
       </div>

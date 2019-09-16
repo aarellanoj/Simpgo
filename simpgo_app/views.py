@@ -105,6 +105,7 @@ def ticket_view(request, ticket_id):
                             {'ticket':ticket,
                             'responses': responses,
                             'response_form':response_form,})
+    
 @login_required
 def my_tickets(request):
     tickets = list(Ticket.objects.filter(created_by=request.user.id))

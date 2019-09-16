@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 from .models import Profile, Ticket, Response
 
+
 #Class Forms
 class UserForm(forms.ModelForm):
     class Meta():

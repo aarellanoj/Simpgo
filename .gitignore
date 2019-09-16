@@ -1,0 +1,4 @@
+simpgo_app/migrations/
+simpgo_app/__pycache__/
+simpgo/__pycache__/
+*.pyc

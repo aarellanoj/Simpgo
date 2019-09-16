@@ -1,0 +1,49 @@
+{% extends "simpgo_app/base.html" %}
+{% load humanize %}
+{% block after_nav %}
+  <section class="hero is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            Mis Tickets
+        </h1>
+          <h2 class="subtitle">Todos los Tickets de {{ user.get_full_name }}</h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_body %}
+  {% if user.is_authenticated %}
+    <div class="container" style="padding:3em;">
+      <div class="columns">
+        <div class="column is-8 is-offset-2 box">
+          <center>
+            <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+              <thead>
+                <tr class="">
+                  <th><abbr title="Position">ID</abbr></th>
+                  <th>Titulo</th>
+                  <th><abbr title="Played">Prioridad</abbr></th>
+                  <th><abbr title="Drawn">Creado</abbr></th>
+                  <th><abbr title="Lost">Estatus</abbr></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ticket in tickets %}
+                  <tr>
+                    <th>{{ticket.id}}</th>
+                    <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> 
+                    </td>
+                    <td>{{ticket.get_priority_display}}</td>
+                    <td>{{ticket.created|naturaltime}}</td>
+                    <td>{{ticket.get_status_display}}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </center>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

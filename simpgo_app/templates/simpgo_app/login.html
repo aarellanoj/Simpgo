@@ -1,0 +1,26 @@
+{% extends 'simpgo_app/base.html' %}
+{% block body_block %}
+  <div class="container" style="margin-top:3em; padding:2em;">
+    <div class="columns">
+        <div class="column is-4 is-offset-4 box">
+            <form method="post" action="{% url 'user_login' %}">{% csrf_token %}
+                {# A more "HTML" way of creating the login form#}
+                <p class="title" align="center">Ingresar</p>
+                <hr>
+                <div class="field">
+                    <label class="label" for="username">Nombre de Usuario:</label>
+                    <input class="input" type="text" name="username" placeholder="Username">
+                </div>
+                <div class="field">
+                    <label class="label" for="password">Contraseña:</label>
+                    <input class="input" type="password" name="password" placeholder="Password">
+                </div>
+                <hr>
+                <div class="control">
+                    <input type="submit" class="button is-success is-fullwidth" name="" value="Ingresar">
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}

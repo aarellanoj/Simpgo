@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simpgo Helpdesk</title>
+    <!-- Latest compiled and minified CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bulma.css' %}" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
+  <body>
+    <nav class="navbar is-spaced has-shadow is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+
+          <a class="navbar-item" href="{% url 'index' %}">
+            <span class="icon has-text-success">
+              <i class="fas fa-2x fa-h-square"></i>
+            </span>
+             &nbsp;&nbsp;
+            <span class="is-hidden-desktop-only">
+              <font size="5"> <strong>Simpgo</strong></font>
+            </span>&nbsp;
+          </a>
+      
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+      
+        <div id="navbarBasicExample" class="navbar-menu">
+                {# Django Home Link / Admin Link / Register Link#}
+
+                {% if user.is_staff and user.is_authenticated %}
+                  <div class="navbar-end">
+
+                    <a class="navbar-item" href="{% url 'create_ticket' %}">
+                      <span class="icon has-text-success">
+                        <i class="fas fa-plus-square"></i>
+                      </span>
+                      <span>Crear Ticket</span>
+                    </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                      <a class="navbar-link">
+                        <span class="icon has-text-success">
+                          <i class="fas fa-user-tie"></i>
+                        </span>
+                        <span>{{user.username}}</span>
+                      </a>
+                      <div class="navbar-dropdown is-right">
+                        <a class="navbar-item">
+                          Cuenta
+                        </a>
+                        <a class="navbar-item" href="{% url 'admin:index' %}">
+                          Admin
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="{% url 'logout' %}">
+                          Cerrar Sesión
+                        </a>
+                      </div>
+                    </div>
+
+                  </div>
+
+                {% elif user.is_authenticated %}
+                  <div class="navbar-end">
+                      <a class="navbar-item" href="{% url 'my_tickets' %}">
+                        <span class="icon has-text-success">
+                          <i class="fas fa-clipboard-list"></i>
+                        </span>
+                        <span>Mis Tickets</span>
+                      </a>
+
+                      <a class="navbar-item" href="{% url 'create_ticket' %}">
+                        <span class="icon has-text-success">
+                            <i class="fas fa-plus-square"></i>
+                        </span>
+                        <span>Crear Ticket</span>
+                      </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                      <a class="navbar-link">
+                        <span class="icon has-text-success">
+                            <i class="fas fa-user-alt"></i>
+                        </span>
+                        <span>{{user.username}}</span>                      
+                      </a>
+                        
+                      <div class="navbar-dropdown is-right">
+                        <a class="navbar-item">
+                          Cuenta
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item" href="{% url 'logout' %}" >
+                          Cerrar Sesión
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                    <div class="navbar-end">
+                      <div class="navbar-item">
+                        <div class="buttons">
+                          <a class="button is-black" href="{% url 'register' %}">
+                            <strong>Registrar</strong>
+                          </a>
+                          <a class="button is-light" href="{% url 'user_login' %}">
+                            <strong>Ingresar</strong>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+        </div>
+      </nav>
+      {% block after_nav %}
+      {% endblock %}
+      <div class="container">
+        {% block body_block %}
+        {% endblock %}
+      </div>
+      <div class="container">
+        {% block body_body%}
+        {% endblock %}
+      </div>
+  </body>
+</html>

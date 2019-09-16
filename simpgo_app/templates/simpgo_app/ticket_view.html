@@ -1,0 +1,118 @@
+{% extends "simpgo_app/base.html" %}
+{% block after_nav %}
+  <section class="hero is-light">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            {{ ticket.title }}
+        </h1>
+          <h2 class="subtitle">Ticket #{{ticket.id}} </h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_block %}
+    <div class="container box" style="padding:2em; margin-top: 2em;">
+        <nav class="level">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Creado Por</p>
+              <p class="title">{{ticket.created_by.username}}</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Estatus</p>
+              <p class="title">{{ticket.get_status_display}}</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Asignado a</p>
+              <p class="title">Alex Arellano</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="heading">Fecha de Creación</p>
+              <p class="title">{{ticket.created}}</p>
+            </div>
+          </div>
+        </nav>
+    </div>
+{% endblock%}
+{% block body_body %}
+  <br>
+  <!-- Solicitud -->
+  <article class="media">
+      <figure class="media-left">
+        <p class="image is-64x64">
+          <img src="#">
+        </p>
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          <p>
+            <strong>{{ticket.created_by.get_full_name}}</strong>
+            <br>
+            {{ticket.content}}
+            <br>
+            <small><a>Reply</a></small>
+          </p>
+        </div>
+      </div>
+  </article>
+  <!-- Fin Solicitud -->
+
+  <!-- Divisor -->
+  <hr>
+
+  <!-- Respuestas al Comentario -->
+  {% for r in responses %}
+    <article class="media">
+        <figure class="media-left">
+          <p class="image is-64x64">
+            <img src="#">
+          </p>
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <p>
+              <strong>{{r.user.get_full_name}}</strong>
+              <br>
+              {{r.response}}
+              <br>
+              <small><a>Reply</a></small>
+            </p>
+          </div>
+        </div>
+    </article>
+    <hr>
+  {% endfor %}
+  <!-- Fin Respuestas al Comentario -->
+
+<!-- Comentario Form -->
+  <article class="media">
+    <figure class="media-left">
+      <p class="image is-64x64">
+        <img src="#">
+      </p>
+    </figure>
+    <div class="media-content">
+      <form method="post" action="{% url 'ticket_view' ticket.id %}">{% csrf_token %}
+        <div class="field">
+          <p class="control">
+            {{response_form.response}}
+          </p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <input type="submit" class="button is-success" name="" value="Comentar">
+          </p>
+        </div>
+      </form>
+    </div>
+  </article>
+  <br>
+<!-- Fin Comentario Form -->
+{% endblock %}

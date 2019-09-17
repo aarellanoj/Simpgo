@@ -103,7 +103,7 @@ class Department(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name + " -> " + self.management.name 
 
 class Ticket_Actions(models.Model):
     """Comments"""

@@ -21,7 +21,7 @@
                         {{ticket_form.title}}
                     </div>
                     <div class="field">
-                        <label class="label" for="{{ ticket.content.id_for_label }}">{{ ticket_form.content.label }}:</label>
+                        <label class="label" for="{{ ticket.content.id_for_label }}">{{ ticket_form.content.label }}: {{ ticket_form.content.errors }}</label>
                         {{ticket_form.content}}
                     </div>
                     <div class="field">

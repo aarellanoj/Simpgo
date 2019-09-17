@@ -39,7 +39,7 @@
             <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
               <p class="title" align="center">Solicitudes Procesadas</p>
               <hr>
-              <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+              <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
                     <th><input type="checkbox" onClick="toggle(this)"/></th>
@@ -80,7 +80,7 @@
             <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
                 <p class="title" align="center">Solicitudes Pendientes</p>
                 <hr>
-              <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+              <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
                     <th><input type="checkbox" onClick="toggle2(this)"/></th>

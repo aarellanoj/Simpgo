@@ -125,3 +125,8 @@ def my_tickets(request):
 
     return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets, 'tickets_pro':tickets_pro})
 
+@login_required
+def all_tickets(request):
+
+    tickets = list(Ticket.objects.all())
+    return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})

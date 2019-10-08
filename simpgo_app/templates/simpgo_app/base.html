@@ -38,6 +38,13 @@
                 {% if user.is_staff and user.is_authenticated %}
                   <div class="navbar-end">
 
+                    <a class="navbar-item" href="{% url 'all_tickets' %}">
+                      <span class="icon has-text-success">
+                            <i class="fas fa-clipboard-list"></i>
+                      </span>
+                      <span>Tickets</span>
+                    </a>
+
                     <a class="navbar-item" href="{% url 'create_ticket' %}">
                       <span class="icon has-text-success">
                         <i class="fas fa-plus-square"></i>

@@ -24,61 +24,21 @@
         <h1 class="title">
             Mis Tickets
         </h1>
-          <h2 class="subtitle">Todos los Tickets de {{ user.get_full_name }}</h2>
+          <h2 class="subtitle">Todos los Tickets</h2>
       </div>
     </div>
   </section>
 {% endblock %}
 {% block body_body %}
-  {% if user.is_authenticated %}
+  {% if user.is_staff %}
     <div class="container" style="padding:3em;">
-      {% if tickets_pro %}
-      <div class="columns">
-        <div class="column is-8 is-offset-2 box">
-          <center>
-            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
-              <p class="title" align="center">Solicitudes Procesadas</p>
-              <hr>
-              <table class="table is-narrow is-hoverable is-fullwidth">
-                <thead>
-                  <tr class="">
-                    <th><input type="checkbox" onClick="toggle(this)"/></th>
-                    <th><abbr title="Position">ID</abbr></th>
-                    <th>Titulo</th>
-                    <th><abbr title="Played">Prioridad</abbr></th>
-                    <th><abbr title="Drawn">Creado</abbr></th>
-                    <th><abbr title="Lost">Estatus</abbr></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for ticket in tickets_pro %}
-                    <tr>
-                      <td><input name='ticket_id' value='{{ ticket.id }}' type="checkbox"></td>
-                      <th>{{ticket.id}}</th>
-                      <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
-                      <td>{{ticket.get_priority_display}}</td>
-                      <td>{{ticket.created|naturaltime}}</td>
-                      <td>{{ticket.get_status_display}}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <div class="control">
-                  <input type="submit" class="button is-dark" name="remove" value="Eliminar de Bandeja">
-              </div>
-            </form>
-          </center>
-        </div>
-      </div>
-      <br>
-      {% endif %}
 
       {% if tickets %}
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
           <center>
             <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
-                <p class="title" align="center">Solicitudes Pendientes</p>
+                <p class="title" align="center">Solicitudes</p>
                 <hr>
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
@@ -112,6 +72,7 @@
         </div>
       </div>
       {% endif %}
+
     </div>
   {% endif %}
 {% endblock %}

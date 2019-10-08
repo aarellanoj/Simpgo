@@ -138,3 +138,10 @@ def account(request,user_id):
 @staff_member_required
 def user_was_created(request):
     user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
+
+@staff_member_required
+def all_tickets(request):
+
+    tickets = list(Ticket.objects.all())
+    return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})
+

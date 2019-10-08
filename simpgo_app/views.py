@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404, get_list_or_40
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.models import User
 
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
 
-from simpgo_app.models import Ticket, Response
+from simpgo_app.models import Ticket, Response, Profile
 
 #Others Functions
 
@@ -23,42 +25,39 @@ def index(request):
 	return render(request,'simpgo_app/index.html')
 
 def user_login(request):
-	if request.method == 'POST':
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		user = authenticate(username=username,password=password)
-		if user:
-			if user.is_active:
-				login(request,user)
-				return HttpResponseRedirect(reverse('index'))
-			else:
-				return HttpResponse("Su Cuenta Fue Desactivada.")
-		else:
-			return HttpResponse("¡Usuario o Clave Invalida!")
-	else:
-		return render(request, 'simpgo_app/login.html', {})
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username,password=password)
+        if user:
+            if user.is_active:
+                if hasattr(user,'profile'):
+                    login(request,user)
+                    return HttpResponseRedirect(reverse('index'))
+                else:
+                    return HttpResponse("Su Perfil Aun no ha sido creado.")
+            else:
+                return HttpResponse("Su Cuenta Fue Desactivada.")
+        else:
+            return HttpResponse("¡Usuario o Clave Invalida!")
+    else:
+        return render(request, 'simpgo_app/login.html', {})
 
 def register(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        profile_form = ProfileForm(data=request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
             registered = True
         else:
-            print(user_form.errors,profile_form.errors)
+            print(user_form.errors)
     else:
         user_form = UserForm()
-        profile_form = ProfileForm()
     return render(request,'simpgo_app/registration.html',
                           {'user_form':user_form,
-                           'profile_form':profile_form,
                            'registered':registered})
 
 @login_required
@@ -125,3 +124,17 @@ def my_tickets(request):
 
     return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets, 'tickets_pro':tickets_pro})
 
+@login_required
+def account(request,user_id):
+    account = get_object_or_404(User,pk=user_id)
+
+    user_form = UserForm()
+    profile_form = ProfileForm()
+
+    return render(request, 'simpgo_app/account.html', {'account':account,
+                                                        'user_form':user_form,
+                                                        'profile_form':profile_form })
+
+@staff_member_required
+def user_was_created(request):
+    user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]

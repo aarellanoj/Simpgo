@@ -12,7 +12,27 @@
   </section>
 {% endblock %}
 {% block body_block %}
-    <div class="container box" style="padding:2em; margin-top: 2em;">
+    <div class="buttons has-addons is-right" style="margin-top:10px;">
+        <a class="button is-success is-outlined">
+          <span class="icon is-small">
+            <i class="fas fa-hand-paper"></i>
+          </span>
+          <span>Tomar</span>
+        </a>
+        <a class="button is-info is-outlined">
+          <span class="icon is-small">
+            <i class="fas fa-hand-holding"></i>
+          </span>
+          <span>Soltar</span>
+        </a>
+        <a class="button is-danger is-outlined">
+          <span class="icon is-small">
+            <i class="fas fa-thumbs-down"></i>
+          </span>
+          <span>Rechazar</span>
+        </a>
+    </div>
+    <div class="container box" style="padding:2em;">
         <nav class="level">
           <div class="level-item has-text-centered">
             <div>
@@ -29,7 +49,7 @@
           <div class="level-item has-text-centered">
             <div>
               <p class="heading">Asignado a</p>
-              <p class="title">Alex Arellano</p>
+              <p class="title">{{ ticket.assigned_to }}</p>
             </div>
           </div>
           <div class="level-item has-text-centered">
@@ -105,10 +125,25 @@
             {{response_form.response}}
           </p>
         </div>
-        <div class="field">
-          <p class="control">
-            <input type="submit" class="button is-success" name="" value="Comentar">
-          </p>
+        <div class="field has-addons">
+          <button type="submit" name="comment" class="button is-success">Comentar</button>
+          &nbsp;&nbsp;
+          <button type="submit" name="comment/close" class="button is-warning">Comentar/Cerrar</button>
+          &nbsp;&nbsp;
+          <div class="control">
+            <div class="select">
+              <select name="status">
+                <option value="0">Cambiar Estatus</option>
+                <option value="1">Abierto</option>
+                <option value="2">En Proceso</option>
+                <option value="3">Cerrado</option>
+                <option value="4">Rechazado</option>
+              </select>
+            </div>
+          </div>
+          <div class="control">
+            <button type="submit" name="change" class="button is-info">Cambiar</button>
+          </div>
         </div>
       </form>
     </div>

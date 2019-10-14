@@ -60,7 +60,7 @@
                         <span>{{user.username}}</span>
                       </a>
                       <div class="navbar-dropdown is-right">
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="{% url 'account' user.id %}">
                           Cuenta
                         </a>
                         <a class="navbar-item" href="{% url 'admin:index' %}">
@@ -101,7 +101,7 @@
                       </a>
                         
                       <div class="navbar-dropdown is-right">
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="{% url 'account' user.id %}" >
                           Cuenta
                         </a>
                         <hr class="navbar-divider">

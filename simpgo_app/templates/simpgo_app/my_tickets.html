@@ -31,7 +31,12 @@
 {% endblock %}
 {% block body_body %}
   {% if user.is_authenticated %}
-    <div class="container" style="padding:3em;">
+    <div class="buttons has-addons is-right" style="margin-top:15px;">
+      <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+        <button type="submit" name="seeall" class="button is-medium is-success is-outlined">Ver Todos Los Tickets</button>
+      </form>
+    </div>
+    <div class="container" style="padding:1em;">
       {% if tickets_pro %}
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
@@ -93,6 +98,46 @@
                 </thead>
                 <tbody>
                   {% for ticket in tickets %}
+                    <tr>
+                      <td><input name='ticket_id2' value='{{ ticket.id }}' type="checkbox"></td>
+                      <th>{{ticket.id}}</th>
+                      <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
+                      <td>{{ticket.get_priority_display}}</td>
+                      <td>{{ticket.created|naturaltime}}</td>
+                      <td>{{ticket.get_status_display}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="control">
+                  <input type="submit" class="button is-dark" name="cancel" value="Cancelar Ticket">
+              </div>
+            </form>
+          </center>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if all_tickets %}
+      <div class="columns">
+        <div class="column is-8 is-offset-2 box">
+          <center>
+            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+                <p class="title" align="center">Todas Las Solicitudes</p>
+                <hr>
+              <table class="table is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <th><input type="checkbox" onClick="toggle2(this)"/></th>
+                    <th><abbr title="Position">ID</abbr></th>
+                    <th>Titulo</th>
+                    <th><abbr title="Played">Prioridad</abbr></th>
+                    <th><abbr title="Drawn">Creado</abbr></th>
+                    <th><abbr title="Lost">Estatus</abbr></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ticket in all_tickets %}
                     <tr>
                       <td><input name='ticket_id2' value='{{ ticket.id }}' type="checkbox"></td>
                       <th>{{ticket.id}}</th>

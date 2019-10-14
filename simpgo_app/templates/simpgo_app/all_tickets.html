@@ -8,13 +8,6 @@
         checkboxes[i].checked = source.checked;
       }
     }
-
-    function toggle2(source) {
-      checkboxes = document.getElementsByName('ticket_id2');
-      for(var i=0, n=checkboxes.length;i<n;i++) {
-        checkboxes[i].checked = source.checked;
-      }
-    }
   </script>
 {% endblock %}
 {% block after_nav %}
@@ -30,20 +23,23 @@
   </section>
 {% endblock %}
 {% block body_body %}
-  {% if user.is_staff %}
-    <div class="container" style="padding:3em;">
-
+    <div class="buttons has-addons is-right" style="margin-top:15px;">
+      <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
+        <button type="submit" name="seeall" class="button is-medium is-success is-outlined">Ver Todos Los Tickets</button>
+      </form>
+    </div>
+    <div class="container" style="padding:1em;">
       {% if tickets %}
       <div class="columns">
         <div class="column is-8 is-offset-2 box">
           <center>
-            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+            <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
                 <p class="title" align="center">Solicitudes</p>
                 <hr>
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
-                    <th><input type="checkbox" onClick="toggle2(this)"/></th>
+                    <th><input type="checkbox" onClick="toggle(this)"/></th>
                     <th><abbr title="Position">ID</abbr></th>
                     <th>Titulo</th>
                     <th><abbr title="Played">Prioridad</abbr></th>
@@ -54,7 +50,7 @@
                 <tbody>
                   {% for ticket in tickets %}
                     <tr>
-                      <td><input name='ticket_id2' value='{{ ticket.id }}' type="checkbox"></td>
+                      <td><input name='ticket_id' value='{{ ticket.id }}' type="checkbox"></td>
                       <th>{{ticket.id}}</th>
                       <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
                       <td>{{ticket.get_priority_display}}</td>
@@ -64,15 +60,30 @@
                   {% endfor %}
                 </tbody>
               </table>
-              <div class="control">
-                  <input type="submit" class="button is-dark" name="cancel" value="Cancelar Ticket">
+              <div class="field has-addons">
+                  <input type="submit" class="button is-dark" name="cancel" value="Cerrar Ticket">
+                  &nbsp;&nbsp;
+                  <div class="control">
+                    <div class="select">
+                      <select name="status">
+                        <option value="0">Cambiar Estatus</option>
+                        <option value="1">Abierto</option>
+                        <option value="2">En Proceso</option>
+                        <option value="3">Cerrado</option>
+                        <option value="4">Rechazado</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <button type="submit" name="change" class="button is-info">Cambiar</button>
+                  </div>
               </div>
             </form>
           </center>
         </div>
       </div>
+      {% else %}
+        <p>No hay Tickets</p>
       {% endif %}
-
     </div>
-  {% endif %}
 {% endblock %}

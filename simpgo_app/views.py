@@ -13,12 +13,14 @@ from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
 from simpgo_app.models import Ticket, Response, Profile
 
 #Others Functions
-
 def is_myticket(user,ticket):
     if user.is_superuser or user.is_staff or user.id == ticket.created_by.id:
         return True
     else:
         return False
+
+def user_was_created():
+    user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
 
 # Create your views here.
 def index(request):
@@ -72,6 +74,8 @@ def create_ticket(request):
         if ticket_form.is_valid():
             ticket = ticket_form.save(commit=False)
             ticket.created_by = request.user
+            ticket._assign_priority()
+            ticket._assign_ticket()
             ticket.save()
             return HttpResponseRedirect('/ticket-view/' + str(ticket.id))
     else:
@@ -88,17 +92,28 @@ def ticket_view(request, ticket_id):
 
     #Verificamos el Formulario de Respuesta
     if request.method == 'POST':
-        response_form = ResponseForm(data=request.POST)
-        if response_form.is_valid():
-            response = response_form.save(commit=False)
-            response.user = request.user
-            response.ticket = ticket
 
-            response.save()
-            response_form = ResponseForm() #Guardamos la Respuesta
-            return HttpResponseRedirect('./') #Limpiamos el Formulario
+        if request.POST.get('response') is not None:
+            response_form = ResponseForm(data=request.POST)
+            if response_form.is_valid():
+                response = response_form.save(commit=False)
+                response.user = request.user
+                response.ticket = ticket
+                response.save() #Guardamos la Respuesta
+                response_form = ResponseForm(use_required_attribute=False) #Limpiamos el Formulario
+
+        if request.POST.get('comment/close') is not None:
+            ticket._change_status_to(3)
+
+        if request.POST.get('change') is not None:
+            value = int(request.POST.get('status'))
+            if value in [1,2,3,4]:
+                ticket._change_status_to(value)
+
+        return HttpResponseRedirect('./')
+
     else:
-        response_form = ResponseForm()
+        response_form = ResponseForm(use_required_attribute=False)
 
     return render(request, 'simpgo_app/ticket_view.html',
                             {'ticket':ticket,
@@ -112,6 +127,10 @@ def my_tickets(request):
     tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3],deleted=0))
 
     if request.method == 'POST':
+
+        if request.POST.get('seeall') is not None:
+            all_tickets = list(Ticket.objects.filter(created_by=request.user.id))
+            return render(request, 'simpgo_app/my_tickets.html', {'all_tickets':all_tickets,})
 
         if request.POST.get('ticket_id') is not None:
             for ids in request.POST.getlist('ticket_id'):
@@ -128,20 +147,57 @@ def my_tickets(request):
 def account(request,user_id):
     account = get_object_or_404(User,pk=user_id)
 
-    user_form = UserForm()
-    profile_form = ProfileForm()
+    if request.user == account or request.user.is_staff:
+        user_form = UserForm(initial={'username': account.username,
+                                      'first_name':account.first_name,
+                                      'last_name': account.last_name,
+                                      'email':account.email})
+        if hasattr(account,'profile'):
+            profile_form = ProfileForm(initial={'department': account.profile.department,
+                                                'job_title':account.profile.job_title,
+                                                'rank': account.profile.rank})
+        else:
+            profile_form = ProfileForm()
+    else:
+        raise PermissionDenied()
 
     return render(request, 'simpgo_app/account.html', {'account':account,
                                                         'user_form':user_form,
                                                         'profile_form':profile_form })
 
 @staff_member_required
-def user_was_created(request):
-    user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
+def users(request):
+    pass
 
 @staff_member_required
+def departments(request):
+    pass
+    
+@staff_member_required
 def all_tickets(request):
+    tickets = list(Ticket.objects.filter(deleted=0))
+    if request.method == 'POST':
 
-    tickets = list(Ticket.objects.all())
+        if request.POST.get('seeall') is not None:
+            tickets = list(Ticket.objects.all())
+            return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})
+
+        if request.POST.get('ticket_id') is not None:
+
+            if request.POST.get('cancel') is not None:
+                for ids in request.POST.getlist('ticket_id'):
+                    Ticket.objects.get(id=ids)._remove()
+
+            if request.POST.get('change') is not None:
+                value = int(request.POST.get('status'))
+                if value in [1,2,3,4]:
+                    for ids in request.POST.getlist('ticket_id'):
+                        Ticket.objects.get(id=ids)._change_status_to(value)
+
+        else:
+            pass
+
+        return HttpResponseRedirect('./') 
+
     return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})
 

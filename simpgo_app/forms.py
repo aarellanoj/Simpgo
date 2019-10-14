@@ -41,12 +41,12 @@ class ProfileForm(forms.ModelForm):
 class TicketForm(forms.ModelForm):
     class Meta():
         model = Ticket
-        fields = ('title','content','priority', 'image_file')
+        fields = ('title','content','description','image_file')
 
         widgets = {
             'title':forms.TextInput(attrs={'class':'input','placeholder':'Asunto del Ticket'}),
             'content': forms.Textarea(attrs={'class':'textarea','placeholder':'Contenido del Ticket'}),
-            'priority': forms.Select(),
+            'description': forms.Select(),
             'image_file': forms.FileInput(attrs={'class':'file-input'}),
         }
 
@@ -56,6 +56,7 @@ class ResponseForm(forms.ModelForm):
         fields = ('response','image_file')
 
         widgets = {
-            'response': forms.Textarea(attrs={'class':'textarea','placeholder':'Respuesta','rows':'4'}),
+            'response': forms.Textarea(attrs={'class':'textarea','placeholder':'Respuesta',
+                                              'rows':'4'}),
             'image_file': forms.FileInput(attrs={'class':'file-input'}),
         }

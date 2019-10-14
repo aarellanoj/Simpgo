@@ -25,9 +25,11 @@
                         {{ticket_form.content}}
                     </div>
                     <div class="field">
-                        <label class="label" for="{{ ticket.priority.id_for_label }}">{{ ticket_form.priority.label }}:</label>
-                        <div class="select is-fullwidth">
-                            {{ticket_form.priority}}
+                        <label class="label" for="{{ ticket_form.description.id_for_label }}">{{ ticket_form.description.label }}:</label>
+                        <div class="control">
+                          <div class="select is-fullwidth">
+                            {{ticket_form.description}}
+                          </div>
                         </div>
                     </div>
                     <div class="file">

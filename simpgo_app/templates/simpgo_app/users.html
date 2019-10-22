@@ -1,0 +1,56 @@
+{% extends "simpgo_app/base.html" %}
+{% block after_nav %}
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            Usuarios
+        </h1>
+          <h2 class="subtitle"></h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_body %}
+    <div class="container" style="padding:2em; margin:2em;">
+      <div class="columns">
+        <div class="column is-8 is-offset-2 box">
+          <center>
+            <form method="POST" action="#">{% csrf_token %}
+                <p class="title" align="center">Usuarios Activos</p>
+                <hr>
+              {% if users_w %}
+                <div class="buttons is-right">
+                    <button type="submit" name="seeall" class="button is-primary is-outlined">Usuarios Sin Perfil</button>
+                </div>
+              {% endif %}
+              <table class="table is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Cargo</th>
+                    <th>Departamento</th>
+                    <th>Tipo De Usuario</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for user in users %}
+                    <tr>
+                      <th>{{user.id}}</th>
+                      <td>
+                        <a href="{% url 'account' user.id %}" title="{{user.get_full_name}}">{{user.username}}</a> 
+                      </td>
+                      <td>{{user.profile.job_title}}</td>
+                      <td>{{user.profile.department.name}}</td>
+                      <td>{{user.profile.rank}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </form>
+          </center>
+        </div>
+      </div>
+    </div>
+{% endblock %}

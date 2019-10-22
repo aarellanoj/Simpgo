@@ -1,6 +1,6 @@
 {% extends "simpgo_app/base.html" %}
 {% block after_nav %}
-  <section class="hero is-light">
+  <section class="hero is-primary is-bold">
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
@@ -12,10 +12,10 @@
   </section>
 {% endblock %}
 {% block body_block %}
-  <div class="container" style=" padding:2em;">
+  <div class="container" style="padding:2em; margin:2em;">
     <div class="columns">
       <div class="column is-6 is-offset-3 box">
-        <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+        <form enctype="multipart/form-data" action="./" method="POST">{% csrf_token %}
           {% for field in user_form %}
             <div class="field">
               <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
@@ -36,9 +36,10 @@
           {% endif %}
           <hr>
           <div class="control">
-              <input type="submit" class="button is-success is-fullwidth" name="" value="Cambiar">
+              <input type="submit" class="button is-primary is-fullwidth" name="" value="Cambiar">
           </div>
         </form>
     </div>
   </div>
+</div>
 {% endblock %}

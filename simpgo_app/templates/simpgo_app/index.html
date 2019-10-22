@@ -16,5 +16,7 @@
   </section>
 {% endblock %}
 {% block body_block %}
-  
+  {% if user.is_staff %}
+    <h1>Estadisticas</h1>
+  {% endif %}
 {% endblock %}

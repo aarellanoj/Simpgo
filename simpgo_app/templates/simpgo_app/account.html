@@ -15,7 +15,7 @@
   <div class="container" style=" padding:2em;">
     <div class="columns">
       <div class="column is-6 is-offset-3 box">
-        <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+        <form enctype="multipart/form-data" action="#" method="POST">{% csrf_token %}
           {% for field in user_form %}
             <div class="field">
               <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>

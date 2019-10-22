@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
 
-from simpgo_app.models import Ticket, Response, Profile
+from simpgo_app.models import Ticket, Response, Profile, Department
 
 #Others Functions
 def is_myticket(user,ticket):
@@ -123,13 +123,13 @@ def ticket_view(request, ticket_id):
 @login_required
 def my_tickets(request):
 
-    tickets = list(Ticket.objects.filter(created_by=request.user.id,status__in=[1],deleted=0))
-    tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3],deleted=0))
+    tickets = list(Ticket.objects.filter(created_by=request.user.id,status__in=[1,2],deleted=0).order_by('-created'))
+    tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3,4],deleted=0).order_by('-created'))
 
     if request.method == 'POST':
 
         if request.POST.get('seeall') is not None:
-            all_tickets = list(Ticket.objects.filter(created_by=request.user.id))
+            all_tickets = list(Ticket.objects.filter(created_by=request.user.id).order_by('-created'))
             return render(request, 'simpgo_app/my_tickets.html', {'all_tickets':all_tickets,})
 
         if request.POST.get('ticket_id') is not None:
@@ -153,9 +153,7 @@ def account(request,user_id):
                                       'last_name': account.last_name,
                                       'email':account.email})
         if hasattr(account,'profile'):
-            profile_form = ProfileForm(initial={'department': account.profile.department,
-                                                'job_title':account.profile.job_title,
-                                                'rank': account.profile.rank})
+            profile_form = ProfileForm(request.POST or None,instance=account.profile)
         else:
             profile_form = ProfileForm()
     else:
@@ -163,7 +161,7 @@ def account(request,user_id):
 
     return render(request, 'simpgo_app/account.html', {'account':account,
                                                         'user_form':user_form,
-                                                        'profile_form':profile_form })
+                                                        'profile_form':profile_form})
 
 @staff_member_required
 def users(request):
@@ -175,12 +173,10 @@ def departments(request):
     
 @staff_member_required
 def all_tickets(request):
-    tickets = list(Ticket.objects.filter(deleted=0))
-    if request.method == 'POST':
+    tickets = list(Ticket.objects.filter(deleted=0).order_by('-created'))
+    department = list(Department.objects.all())
 
-        if request.POST.get('seeall') is not None:
-            tickets = list(Ticket.objects.all())
-            return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})
+    if request.method == 'POST':
 
         if request.POST.get('ticket_id') is not None:
 
@@ -199,5 +195,5 @@ def all_tickets(request):
 
         return HttpResponseRedirect('./') 
 
-    return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,})
+    return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,'department':department})
 

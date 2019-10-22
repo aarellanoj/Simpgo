@@ -29,13 +29,50 @@
       </form>
     </div>
     <div class="container" style="padding:1em;">
-      {% if tickets %}
       <div class="columns">
-        <div class="column is-8 is-offset-2 box">
+        <div class="column is-12 box">
           <center>
             <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
                 <p class="title" align="center">Solicitudes</p>
                 <hr>
+                <!-- <div class="field is-grouped">
+                    <p class="control is-expanded">
+                        <input class="input" name="search_id"  type="number" placeholder="ID">
+                    </p>
+                    <p class="control is-expanded">
+                        <input class="input" name="title" type="text" placeholder="Titulo">
+                    </p>
+                    <p class="control">
+                        <div class="select">
+                          <select name="department" >
+                            <option>Direcciones</option>
+                            {% for d in department %}
+                              <option>{{ d.name }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </p>
+                  &nbsp;&nbsp;
+                  <p class="control is-expanded">
+                    <input class="input" name="user" type="text" placeholder="Usuario">
+                  </p>
+                  <p class="control">
+                      <div class="select">
+                        <select name="search_status" >
+                          <option>Estatus</option>
+                          <option value="0">Todos</option>
+                          <option value="1">Abierto</option>
+                          <option value="2">En Proceso</option>
+                          <option value="3">Cerrado</option>
+                          <option value="4">Rechazado</option>
+                        </select>
+                      </div>
+                    </p>
+                    &nbsp;&nbsp;
+                  <p class="control">
+                    <button type="submit" name="search" class="button is-info">Buscar</button>
+                  </p>
+                </div> -->
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
@@ -43,7 +80,9 @@
                     <th><abbr title="Position">ID</abbr></th>
                     <th>Titulo</th>
                     <th><abbr title="Played">Prioridad</abbr></th>
-                    <th><abbr title="Drawn">Creado</abbr></th>
+                    <th>Dirección</th>
+                    <th><abbr title="Drawn">Fecha</abbr></th>
+                    <th><abbr title="Drawn">Creado Por</abbr></th>
                     <th><abbr title="Lost">Estatus</abbr></th>
                   </tr>
                 </thead>
@@ -54,14 +93,16 @@
                       <th>{{ticket.id}}</th>
                       <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
                       <td>{{ticket.get_priority_display}}</td>
+                      <td>{{ticket.created_by.profile.department.management}}</td>
                       <td>{{ticket.created|naturaltime}}</td>
+                      <td>{{ticket.created_by.username}}</td>
                       <td>{{ticket.get_status_display}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
               <div class="field has-addons">
-                  <input type="submit" class="button is-dark" name="cancel" value="Cerrar Ticket">
+                  <input type="submit" class="button is-dark" name="cancel" value="Eliminar Ticket">
                   &nbsp;&nbsp;
                   <div class="control">
                     <div class="select">
@@ -82,8 +123,5 @@
           </center>
         </div>
       </div>
-      {% else %}
-        <p>No hay Tickets</p>
-      {% endif %}
     </div>
 {% endblock %}

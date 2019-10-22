@@ -2,29 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
-#Functions
-def to_who():
-    staff = Profile.objects.filter(rank=2,department=taldepartamento)
-    band = True
-    winner = dict()
-
-    for worker in staff:
-        #Filtramos por Trabajador, por el Tipo de Prioridad y El Estatus
-        worker_tickets = Ticket.objects.filter(assigned_to=worker.id,
-                                               priority=self.priority,
-                                               status__in=[1,2])
-        how_many = len(worker_tickets)
-
-        if band:
-            winner['worker'] = worker
-            winner['how_many'] = how_many
-            band = False 
-        elif how_many > winner['how_many']:
-            winner['worker'] = worker
-            winner['how_many'] = how_many
-
-    return winner['worker']
-
 # Create your models here.
 
 class Management(models.Model):

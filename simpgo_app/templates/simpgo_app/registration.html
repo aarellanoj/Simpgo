@@ -1,37 +1,42 @@
 {% extends "simpgo_app/base.html" %}
-{% block after_nav %}
-  <section class="hero is-light">
+{% block body_block %}
+  {% if registered %}
+  <section class="hero is-primary is-fullwidth is-bold">
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
-          Registro
+            ¡Registro Exitoso!
         </h1>
-          <h2 class="subtitle">Simple Django Helpdesk</h2>
+          <h2 class="subtitle">Espere a que su Cuenta sea Habilitada por los Administradores</h2>
       </div>
     </div>
   </section>
-{% endblock %}
-{% block body_block %}
-  <div class="container" style=" padding:2em;">
-    <div class="columns">
-      {% if registered %}
-        <h1 class="title is-1">Thank you for registering!</h1>
-      {% else %}
-      <div class="column is-6 is-offset-3 box">
-        <form enctype="multipart/form-data" method="POST">{% csrf_token %}
-          {% for field in user_form %}
-            <div class="field">
-              <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-              {{field}}
+  {% else %}
+    <div class="container" style="padding:2em; margin:2em;">
+      <div class="columns">
+        <div class="column is-4 is-offset-4 box">
+          {% if user_form.errors %}
+            <div class="notification is-warning">
+                <a href="./" class="delete" ></a>
+                {{user_form.errors}}
             </div>
-          {% endfor %}
-          <hr>
-          <div class="control">
-              <input type="submit" class="button is-success is-fullwidth" name="" value="Registrar">
-          </div>
-        </form>
-      
-      {% endif %}
+          {% endif %}
+          <form enctype="multipart/form-data" method="POST">{% csrf_token %}
+            <p class="title" align="center">Resgistrate</p>
+            <hr>
+            {% for field in user_form %}
+              <div class="field">
+                <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{field}}
+              </div>
+            {% endfor %}
+            <hr>
+            <div class="control">
+                <input type="submit" class="button is-primary is-fullwidth" name="" value="Registrar">
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  </div>
+  {% endif %}
 {% endblock %}

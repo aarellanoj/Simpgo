@@ -12,11 +12,11 @@
     {% endblock %}
   </head>
   <body>
-    <nav class="navbar is-spaced has-shadow is-dark" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-spaced is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
 
           <a class="navbar-item" href="{% url 'index' %}">
-            <span class="icon has-text-success">
+            <span class="icon has-text-primary">
               <i class="fas fa-2x fa-h-square"></i>
             </span>
              &nbsp;&nbsp;
@@ -38,15 +38,22 @@
                 {% if user.is_staff and user.is_authenticated %}
                   <div class="navbar-end">
 
+                    <a class="navbar-item" href="{% url 'users' %}">
+                      <span class="icon has-text-primary">
+                            <i class="fas fa-users"></i>
+                      </span>
+                      <span>Usuarios</span>
+                    </a>
+
                     <a class="navbar-item" href="{% url 'all_tickets' %}">
-                      <span class="icon has-text-success">
+                      <span class="icon has-text-primary">
                             <i class="fas fa-clipboard-list"></i>
                       </span>
                       <span>Tickets</span>
                     </a>
 
                     <a class="navbar-item" href="{% url 'create_ticket' %}">
-                      <span class="icon has-text-success">
+                      <span class="icon has-text-primary">
                         <i class="fas fa-plus-square"></i>
                       </span>
                       <span>Crear Ticket</span>
@@ -54,7 +61,7 @@
 
                     <div class="navbar-item has-dropdown is-hoverable">
                       <a class="navbar-link">
-                        <span class="icon has-text-success">
+                        <span class="icon has-text-primary">
                           <i class="fas fa-user-tie"></i>
                         </span>
                         <span>{{user.username}}</span>
@@ -79,14 +86,14 @@
                   <div class="navbar-end">
 
                       <a class="navbar-item" href="{% url 'my_tickets' %}">
-                        <span class="icon has-text-success">
+                        <span class="icon has-text-primary">
                           <i class="fas fa-clipboard-list"></i>
                         </span>
                         <span>Mis Tickets</span>
                       </a>
 
                       <a class="navbar-item" href="{% url 'create_ticket' %}">
-                        <span class="icon has-text-success">
+                        <span class="icon has-text-primary">
                             <i class="fas fa-plus-square"></i>
                         </span>
                         <span>Crear Ticket</span>
@@ -94,7 +101,7 @@
 
                     <div class="navbar-item has-dropdown is-hoverable">
                       <a class="navbar-link">
-                        <span class="icon has-text-success">
+                        <span class="icon has-text-primary">
                             <i class="fas fa-user-alt"></i>
                         </span>
                         <span>{{user.username}}</span>                      
@@ -137,5 +144,13 @@
         {% block body_body%}
         {% endblock %}
       </div>
+      <footer class="footer" style="background-color:#363636;" >
+        <div class="content has-text-centered is-dark">
+          <p style="color:#f2f2f2;">
+            <strong style="color:#f2f2f2;">Simpgo Helpdesk</strong> por <a href="https://github.com/aarellanoj/Simpgo">Grupo 1</a>. Codigo licenciado por
+            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+          </p>
+        </div>
+      </footer>
   </body>
 </html>

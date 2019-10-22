@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
 
-from simpgo_app.models import Ticket, Response, Profile, Department
+from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles, Rank
 
 #Others Functions
 def is_myticket(user,ticket):
@@ -24,7 +24,8 @@ def user_was_created():
 
 # Create your views here.
 def index(request):
-	return render(request,'simpgo_app/index.html')
+    users_w = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
+    return render(request,'simpgo_app/index.html',{'users_w':users_w})
 
 def user_login(request):
     if request.method == 'POST':
@@ -147,13 +148,49 @@ def my_tickets(request):
 def account(request,user_id):
     account = get_object_or_404(User,pk=user_id)
 
+    if request.method == 'POST':
+        print(request.POST)
+
+        verify = account.check_password(request.POST['password'])
+        if request.user == account and verify:
+            if request.POST.get('email') is not None:
+                account.email = request.POST.get('email')
+                account.save()
+        elif request.user.is_staff:
+            if request.POST.get('email') is not None:
+                account.email = request.POST.get('email')
+                account.save()
+
+        if not hasattr(account,'profile'):
+            profile_form = ProfileForm(data=request.POST)
+            if profile_form.is_valid():
+                profile = profile_form.save(commit=False)
+                profile.user = account
+                profile.save()
+        else:
+            if request.POST.get('department') is not None:
+                account.profile.department = get_object_or_404(Department,
+                                            pk=request.POST.get('department'))
+                account.profile.save()
+
+            if request.POST.get('job_title') is not None:
+                account.profile.job_title = get_object_or_404(Job_Titles,
+                                            pk=request.POST.get('job_title'))
+                account.profile.save()
+
+            if request.POST.get('rank') is not None:
+                account.profile.rank = get_object_or_404(Rank,
+                                        pk=request.POST.get('rank'))
+                account.profile.save()
+
     if request.user == account or request.user.is_staff:
-        user_form = UserForm(initial={'username': account.username,
-                                      'first_name':account.first_name,
-                                      'last_name': account.last_name,
-                                      'email':account.email})
+        user_form = UserForm(instance=account)
+        if request.user.is_staff:
+            print('Es Staff')
+            user_form = UserForm(use_required_attribute=False,instance=account)
+
         if hasattr(account,'profile'):
-            profile_form = ProfileForm(request.POST or None,instance=account.profile)
+            profile_form = ProfileForm(instance=account.profile)
         else:
             profile_form = ProfileForm()
     else:
@@ -165,11 +202,22 @@ def account(request,user_id):
 
 @staff_member_required
 def users(request):
-    pass
+    users = [x for x in User.objects.all() if(hasattr(x,'profile'))]
+    user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
+
+    if request.method == 'POST':
+        if request.POST.get('seeall') is not None:
+             return render(request,'simpgo_app/users.html',{'users':user_without_profile})
+
+    return render(request,'simpgo_app/users.html',{'users':users,
+                                                   'users_w':user_without_profile})
 
 @staff_member_required
 def departments(request):
-    pass
+    management = Management.objects.all()
+    department = Department.objects.all()
+    args = {'management':management,'department':department}
+    return render(request,'simpgo_app/department.html', args)
     
 @staff_member_required
 def all_tickets(request):

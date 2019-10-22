@@ -321,10 +321,7 @@ class Ticket_Actions(models.Model):
         (1,'Abierto'),
         (2,'En Proceso'),
         (3,'Cerrado'),
-        (4,'Re-Abierto'),
-        (5,'Esperando por Información'),
-        (6,'Asignado'),
-        (7,'Reclamado'),
+        (4,'Rechazado')
     )
 
     ticket = models.ForeignKey(

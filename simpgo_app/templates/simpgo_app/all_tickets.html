@@ -11,7 +11,7 @@
   </script>
 {% endblock %}
 {% block after_nav %}
-  <section class="hero is-light">
+  <section class="hero is-primary is-bold">
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
@@ -23,67 +23,29 @@
   </section>
 {% endblock %}
 {% block body_body %}
-    <div class="buttons has-addons is-right" style="margin-top:15px;">
-      <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
-        <button type="submit" name="seeall" class="button is-medium is-success is-outlined">Ver Todos Los Tickets</button>
-      </form>
-    </div>
-    <div class="container" style="padding:1em;">
+    <div class="container" style="padding:2em; margin:2em;">
+      {% if tickets %}
       <div class="columns">
         <div class="column is-12 box">
           <center>
             <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
                 <p class="title" align="center">Solicitudes</p>
                 <hr>
-                <!-- <div class="field is-grouped">
-                    <p class="control is-expanded">
-                        <input class="input" name="search_id"  type="number" placeholder="ID">
-                    </p>
-                    <p class="control is-expanded">
-                        <input class="input" name="title" type="text" placeholder="Titulo">
-                    </p>
-                    <p class="control">
-                        <div class="select">
-                          <select name="department" >
-                            <option>Direcciones</option>
-                            {% for d in department %}
-                              <option>{{ d.name }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                      </p>
-                  &nbsp;&nbsp;
-                  <p class="control is-expanded">
-                    <input class="input" name="user" type="text" placeholder="Usuario">
-                  </p>
-                  <p class="control">
-                      <div class="select">
-                        <select name="search_status" >
-                          <option>Estatus</option>
-                          <option value="0">Todos</option>
-                          <option value="1">Abierto</option>
-                          <option value="2">En Proceso</option>
-                          <option value="3">Cerrado</option>
-                          <option value="4">Rechazado</option>
-                        </select>
-                      </div>
-                    </p>
-                    &nbsp;&nbsp;
-                  <p class="control">
-                    <button type="submit" name="search" class="button is-info">Buscar</button>
-                  </p>
-                </div> -->
+              <div class="buttons is-right">
+                
+              </div>
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
                     <th><input type="checkbox" onClick="toggle(this)"/></th>
-                    <th><abbr title="Position">ID</abbr></th>
+                    <th>ID</th>
                     <th>Titulo</th>
-                    <th><abbr title="Played">Prioridad</abbr></th>
-                    <th>Dirección</th>
-                    <th><abbr title="Drawn">Fecha</abbr></th>
-                    <th><abbr title="Drawn">Creado Por</abbr></th>
-                    <th><abbr title="Lost">Estatus</abbr></th>
+                    <th>Prioridad</th>
+                    <th>Creado</th>
+                    <th>Creado Por</th>
+                    <th>Asignado a</th>
+                    <th>Departamento</th>
+                    <th>Estatus</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -95,13 +57,18 @@
                       <td>{{ticket.get_priority_display}}</td>
                       <td>{{ticket.created_by.profile.department.management}}</td>
                       <td>{{ticket.created|naturaltime}}</td>
-                      <td>{{ticket.created_by.username}}</td>
+                      <td>{{ticket.created_by}}</td>
+                      <td>{{ticket.assigned_to}}</td>
+                      <td>{{ticket.created_by.profile.department.name}}</td>
                       <td>{{ticket.get_status_display}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
               <div class="field has-addons">
+                  <button type="submit" name="seeall"
+                   class="button is-primary is-outlined">Historial</button>
+                   &nbsp;&nbsp;
                   <input type="submit" class="button is-dark" name="cancel" value="Eliminar Ticket">
                   &nbsp;&nbsp;
                   <div class="control">
@@ -123,5 +90,17 @@
           </center>
         </div>
       </div>
+      {% else %}
+        <div class="notification is-primary is-fullwidth is-fullheight">
+          <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
+            <div class="is-right">
+              <button type="submit" name="seeall"
+              class="is-primary button disabled">No Hay Ningun Ticket Solicitado</button>
+              <button type="submit" name="seeall"
+              class="is-dark button">Ver Historial</button>
+            </form>
+            </div>
+        </div>
+      {% endif %}
     </div>
 {% endblock %}

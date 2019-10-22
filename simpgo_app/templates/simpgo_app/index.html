@@ -1,22 +1,82 @@
 {% extends "simpgo_app/base.html" %}
 {% block after_nav %}
-  <section class="hero is-light">
+  <section class="hero is-primary is-bold is-fullheight">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">
-            Bienvenidos a Simpgo Helpdesk
-          </h1>
-          {% if user.is_authenticated %}
-            <h2 class="subtitle">Que es lo que es {{ user.get_full_name }}</h2>
-          {% else %}
-            <h2 class="subtitle">¡Registrate o Logeate!</h2>
-          {% endif %}
+          <div class="columns">
+            <div class="column is-6">
+              {% if user.is_authenticated %}
+                <h1 class="title">
+                  Simpgo Helpdesk
+                </h1>
+                <h2 class="subtitle">Bienvenido {{ user.get_full_name }}</h2>
+                </div>
+              {% else %}
+                <h1 class="title">
+                    ¡Bienvenidos!
+                </h1> 
+                <h2 class="subtitle">
+                  ¡<a href="{% url 'register' %}">Registrate</a> o 
+                  <a href="{% url 'user_login' %}">Ingresa</a>!
+                </h2>
+            </div>
+            <div class="column is-6 ">
+              <div class="card">
+                <div class="card-content">
+                  <p class="title" style="color:black;">
+                    Simpgo Helpdesk
+                  </p>
+                  <p class="subtitle" style="color:black;">
+                    Un Producto de Simpgo Inc.
+                  </p>
+                </div>
+                <footer class="card-footer">
+                  <p class="card-footer-item">
+                    <span>
+                      Siguenos en <a href="https://twitter.com/">Twitter</a>
+                    </span>
+                  </p>
+                  <p class="card-footer-item">
+                    <span>
+                      Contactanos en <a href="#">GitHub</a>
+                    </span>
+                  </p>
+                </footer>
+              </div>
+            </div>
+            {% endif %}
+            {% if user.is_staff %}
+              {% if users_w %}
+              <div class="column is-6 box">
+                <p class="title" align="center" style="color:black;">Usuarios Esperando Perfil</p>
+                <hr>
+                <table class="table is-narrow is-hoverable is-fullwidth">
+                  <thead>
+                    <tr class="">
+                      <th>ID</th>
+                      <th>Usuario</th>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in users_w %}
+                      <tr>
+                        <th>{{user.id}}</th>
+                        <td>
+                        <a href="{% url 'account' user.id %}" title="{{user.get_full_name}}">{{user.username}}</a> 
+                        </td>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% endif %}
+            {% endif %}
+          </div>
         </div>
       </div>
   </section>
-{% endblock %}
-{% block body_block %}
-  {% if user.is_staff %}
-    <h1>Estadisticas</h1>
-  {% endif %}
 {% endblock %}

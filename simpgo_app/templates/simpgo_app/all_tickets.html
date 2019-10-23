@@ -55,7 +55,6 @@
                       <th>{{ticket.id}}</th>
                       <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
                       <td>{{ticket.get_priority_display}}</td>
-                      <td>{{ticket.created_by.profile.department.management}}</td>
                       <td>{{ticket.created|naturaltime}}</td>
                       <td>{{ticket.created_by}}</td>
                       <td>{{ticket.assigned_to}}</td>

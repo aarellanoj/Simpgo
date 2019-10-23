@@ -149,6 +149,24 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <div class="pagination">
+                <span class="step-links">
+                    {% if all_tickets.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ all_tickets.previous_page_number }}">previous</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        Page {{ all_tickets.number }} of {{ all_tickets.paginator.num_pages }}.
+                    </span>
+            
+                    {% if all_tickets.has_next %}
+                        <a href="?page={{ all_tickets.next_page_number }}">next</a>
+                        <a href="?page={{ all_tickets.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+              </div>
+              <hr>
               <div class="control">
                   <input type="submit" class="button is-dark" name="cancel" value="Cancelar Ticket">
               </div>

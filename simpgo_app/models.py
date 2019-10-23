@@ -32,18 +32,6 @@ class Department(models.Model):
     def __str__(self):
         return self.name + " -> " + self.management.name 
 
-class Rank(models.Model):
-    """Comments"""
-
-    title = models.CharField(
-        "Rango en el Sistema",
-        max_length=100,
-    )
-
-    def __str__(self):
-        return self.title
-
-
 class Job_Titles(models.Model):
     """Comments"""
 
@@ -74,6 +62,13 @@ class Job_Titles(models.Model):
 DEFAULT_RANK_ID = 1
 class Profile(models.Model):
     """Comments"""
+    
+    RANKS = (
+        (4,'Administrador'),
+        (3,'Equipo'),
+        (2,'Supervisor'),
+        (1,'Usuario'),
+    )
 
     user = models.OneToOneField(
         User,
@@ -85,6 +80,23 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Departamento al que Pertenece",
     )
+    
+    management_chief = models.OneToOneField(
+        Management,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Direccion Encargado",
+    )
+    
+    department_chief = models.OneToOneField(
+        Department,
+        related_name='+',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        verbose_name="Departamento Encargado",
+    )
 
     job_title = models.ForeignKey(
         Job_Titles,
@@ -92,11 +104,10 @@ class Profile(models.Model):
         verbose_name="Cargo dentro de la Organización",
     )
 
-    rank = models.ForeignKey(
-        Rank,
-        on_delete=models.CASCADE,
+    rank = models.IntegerField(
+        "Rango en El Sistema",
+        choices=RANKS,
         default=DEFAULT_RANK_ID,
-        verbose_name="Rango en el Sistema",
     )
 
     avatar = models.ImageField(
@@ -105,6 +116,12 @@ class Profile(models.Model):
         null=True,
         blank=True,
     )
+    
+    def is_worker(self):
+        if self.rank == 3 or self.rank == 4:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return self.user.get_full_name()
@@ -172,7 +189,7 @@ class Ticket(models.Model):
     )
 
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        Profile,
         on_delete=models.CASCADE,
         verbose_name="Creador del Ticket",
     )
@@ -196,7 +213,7 @@ class Ticket(models.Model):
     )
 
     assigned_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        Profile,
         related_name='+',
         on_delete=models.CASCADE,
         null=True,
@@ -225,7 +242,7 @@ class Ticket(models.Model):
         return super(Ticket, self).save(*args,**kwargs)
 
     def _assign_priority(self,*args,**kwargs):
-        prio_job = self.created_by.profile.job_title.importance
+        prio_job = self.created_by.job_title.importance
         prio_des = self.description.importance
         imp = prio_job + prio_des
 
@@ -239,13 +256,13 @@ class Ticket(models.Model):
         return super(Ticket, self).save(*args,**kwargs)
 
     def _assign_ticket(self,*args,**kwargs):
-        staff = Profile.objects.filter(rank=2,department=self.description.department)
+        staff = Profile.objects.filter(rank__in=[3,4],department=self.description.department)
         band = True
         winner = dict()
 
         for worker in staff:
             #Filtramos por Trabajador, por el Tipo de Prioridad y El Estatus
-            worker_tickets = Ticket.objects.filter(assigned_to=worker.user.id,
+            worker_tickets = Ticket.objects.filter(assigned_to=worker.id,
                                                    priority=self.priority,
                                                    status__in=[1,2],
                                                    deleted=0)
@@ -259,33 +276,11 @@ class Ticket(models.Model):
                 winner['worker'] = worker
                 winner['how_many'] = how_many
 
-        self.assigned_to = winner['worker'].user
+        self.assigned_to = winner['worker']
         return super(Ticket, self).save(*args,**kwargs)
 
     def __str__(self):
         return self.title
-
-class Subscribe(models.Model):
-    """Comments"""
-
-    ticket = models.ForeignKey(
-        Ticket,
-        on_delete=models.CASCADE,
-        verbose_name="Ticket",
-    )
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name="Subscriptor",
-    )
-
-    class Meta:
-        verbose_name = "Subscriber"
-        verbose_name_plural = "Subscribers"
-
-    def __str__(self):
-        return self.user.get_full_name() + " - " + self.ticket.title
 
 class Response(models.Model):
     """Comments"""
@@ -297,7 +292,7 @@ class Response(models.Model):
     )
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        Profile,
         on_delete=models.CASCADE,
         verbose_name="Usuario que Responde",
     )
@@ -331,7 +326,7 @@ class Ticket_Actions(models.Model):
     )
 
     action_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        Profile,
         on_delete=models.CASCADE,
         verbose_name="Usuario que realiza la Acción",
     )
@@ -349,3 +344,25 @@ class Ticket_Actions(models.Model):
     class Meta:
         verbose_name = "Ticket Action"
         verbose_name_plural = "Ticket Actions"
+
+class Subscribe(models.Model):
+    """Comments"""
+
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.CASCADE,
+        verbose_name="Ticket",
+    )
+
+    user = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        verbose_name="Subscriptor",
+    )
+
+    class Meta:
+        verbose_name = "Subscriber"
+        verbose_name_plural = "Subscribers"
+
+    def __str__(self):
+        return self.user.get_full_name() + " - " + self.ticket.title

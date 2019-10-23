@@ -43,7 +43,7 @@
                       </td>
                       <td>{{user.profile.job_title}}</td>
                       <td>{{user.profile.department.name}}</td>
-                      <td>{{user.profile.rank}}</td>
+                      <td>{{user.profile.get_rank_display}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>

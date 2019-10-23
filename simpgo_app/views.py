@@ -7,20 +7,18 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
 
-from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles, Rank
+from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles
 
 #Others Functions
 def is_myticket(user,ticket):
-    if user.is_superuser or user.is_staff or user.id == ticket.created_by.id:
+    if user.is_superuser or user.is_staff or user.profile.id == ticket.created_by.id:
         return True
     else:
         return False
-
-def user_was_created():
-    user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
 
 # Create your views here.
 def index(request):
@@ -74,7 +72,7 @@ def create_ticket(request):
         ticket_form = TicketForm(data=request.POST)
         if ticket_form.is_valid():
             ticket = ticket_form.save(commit=False)
-            ticket.created_by = request.user
+            ticket.created_by = request.user.profile
             ticket._assign_priority()
             ticket._assign_ticket()
             ticket.save()
@@ -124,13 +122,17 @@ def ticket_view(request, ticket_id):
 @login_required
 def my_tickets(request):
 
-    tickets = list(Ticket.objects.filter(created_by=request.user.id,status__in=[1,2],deleted=0).order_by('-created'))
-    tickets_pro = list(Ticket.objects.filter(created_by=request.user.id,status__in=[3,4],deleted=0).order_by('-created'))
+    tickets = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[1,2],deleted=0).order_by('-created'))
+    tickets_pro = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created'))
 
     if request.method == 'POST':
 
         if request.POST.get('seeall') is not None:
-            all_tickets = list(Ticket.objects.filter(created_by=request.user.id).order_by('-created'))
+            all_tickets = list(Ticket.objects.filter(created_by=request.user.profile.id).order_by('-created'))
+            paginator = Paginator(all_tickets, 4) # Show 25 contacts per page
+            page = request.GET.get('page')
+            all_tickets = paginator.get_page(page)
+            
             return render(request, 'simpgo_app/my_tickets.html', {'all_tickets':all_tickets,})
 
         if request.POST.get('ticket_id') is not None:
@@ -179,8 +181,7 @@ def account(request,user_id):
                 account.profile.save()
 
             if request.POST.get('rank') is not None:
-                account.profile.rank = get_object_or_404(Rank,
-                                        pk=request.POST.get('rank'))
+                account.profile.rank = request.POST.get('rank')
                 account.profile.save()
 
     if request.user == account or request.user.is_staff:

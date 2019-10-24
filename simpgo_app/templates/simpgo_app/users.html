@@ -1,4 +1,14 @@
 {% extends "simpgo_app/base.html" %}
+{% block helpdesk_head %}
+  <script language="JavaScript">
+    function toggle(source) {
+      checkboxes = document.getElementsByName('ticket_id');
+      for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
+  </script>
+{% endblock %}
 {% block after_nav %}
   <section class="hero is-primary is-bold">
     <div class="hero-body">
@@ -19,14 +29,10 @@
             <form method="POST" action="#">{% csrf_token %}
                 <p class="title" align="center">Usuarios Activos</p>
                 <hr>
-              {% if users_w %}
-                <div class="buttons is-right">
-                    <button type="submit" name="seeall" class="button is-primary is-outlined">Usuarios Sin Perfil</button>
-                </div>
-              {% endif %}
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">
+                    <th><input type="checkbox" onClick="toggle(this)"/></th>
                     <th>ID</th>
                     <th>Usuario</th>
                     <th>Cargo</th>
@@ -37,6 +43,7 @@
                 <tbody>
                   {% for user in users %}
                     <tr>
+                      <td><input name='ticket_id' value='{{ ticket.id }}' type="checkbox"></td>
                       <th>{{user.id}}</th>
                       <td>
                         <a href="{% url 'account' user.id %}" title="{{user.get_full_name}}">{{user.username}}</a> 
@@ -48,6 +55,23 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                  {% if users.has_previous %}
+                    <a href="?page={{ users.previous_page_number }}" class="pagination-previous">Anterior</a>
+                  {% else %}
+                    <a class="pagination-previous" disabled >Anterior</a>
+                  {% endif %}
+  
+                  {% if users.has_next %}
+                    <a href="?page={{ users.next_page_number }}" class="pagination-next">Siguiente</a>
+                  {% else %}
+                    <a class="pagination-next" disabled >Siguiente</a>
+                  {% endif %}
+  
+                  <ul class="pagination-list">
+                    <li><a class="pagination-link is-current">Pagina {{ users.number }} de {{ users.paginator.num_pages }}</a></li>
+                  </ul>
+              </nav>
             </form>
           </center>
         </div>

@@ -32,7 +32,7 @@
           <span>Rechazar</span>
         </a>
     </div> -->
-    <div class="container box" style="padding:2em; margin:2em;">
+    <div class="container box" style="padding:2em; margin:2em 2em 0.5em 2em;">
         <nav class="level">
           <div class="level-item has-text-centered">
             <div>
@@ -72,12 +72,11 @@
       </figure>
       <div class="media-content">
         <div class="content">
-          <p>
-            <strong>{{ticket.created_by.get_full_name}}</strong>
+          <p style="font-size:20px;" >
+            <strong>Solicitud de {{ticket.created_by.user.get_full_name}} &#128071</strong>
             <br>
             {{ticket.content}}
             <br>
-            <small><a href="#id_response">Responder</a></small>
           </p>
         </div>
       </div>
@@ -98,7 +97,7 @@
         <div class="media-content">
           <div class="content">
             <p>
-              <strong>{{r.user.get_full_name}}</strong>
+              <strong>{{r.user.user.get_full_name}}</strong>
               <br>
               {{r.response}}
               <br>

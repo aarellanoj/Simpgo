@@ -96,7 +96,7 @@ def ticket_view(request, ticket_id):
             response_form = ResponseForm(data=request.POST)
             if response_form.is_valid():
                 response = response_form.save(commit=False)
-                response.user = request.user
+                response.user = request.user.profile
                 response.ticket = ticket
                 response.save() #Guardamos la Respuesta
                 response_form = ResponseForm(use_required_attribute=False) #Limpiamos el Formulario
@@ -121,20 +121,14 @@ def ticket_view(request, ticket_id):
     
 @login_required
 def my_tickets(request):
-
     tickets = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[1,2],deleted=0).order_by('-created'))
-    tickets_pro = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created'))
-
+    
+    #Creando Paginador
+    paginator = Paginator(tickets,8)
+    page = request.GET.get('page')
+    tickets = paginator.get_page(page)
+    
     if request.method == 'POST':
-
-        if request.POST.get('seeall') is not None:
-            all_tickets = list(Ticket.objects.filter(created_by=request.user.profile.id).order_by('-created'))
-            paginator = Paginator(all_tickets, 4) # Show 25 contacts per page
-            page = request.GET.get('page')
-            all_tickets = paginator.get_page(page)
-            
-            return render(request, 'simpgo_app/my_tickets.html', {'all_tickets':all_tickets,})
-
         if request.POST.get('ticket_id') is not None:
             for ids in request.POST.getlist('ticket_id'):
                 Ticket.objects.get(id=ids)._remove()
@@ -144,7 +138,23 @@ def my_tickets(request):
 
         return HttpResponseRedirect('./')
 
-    return render(request, 'simpgo_app/my_tickets.html', {'tickets':tickets, 'tickets_pro':tickets_pro})
+    return render( request, 'simpgo_app/my_tickets.html', {'tickets':tickets} )
+
+@login_required
+def my_tickets_pro(request):
+    tickets_pro = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created'))
+    paginator = Paginator(tickets_pro, 8) # Show 25 contacts per page
+    page = request.GET.get('page')
+    tickets_pro = paginator.get_page(page)
+    return render(request, 'simpgo_app/my_tickets.html', { 'tickets_pro': tickets_pro })
+
+@login_required
+def my_tickets_history(request):
+    history = list(Ticket.objects.filter(created_by=request.user.profile.id).order_by('-created'))
+    paginator = Paginator(history, 8) # Show 25 contacts per page
+    page = request.GET.get('page')
+    history = paginator.get_page(page)
+    return render(request, 'simpgo_app/my_tickets.html', {'history':history,})
 
 @login_required
 def account(request,user_id):
@@ -201,14 +211,21 @@ def account(request,user_id):
                                                         'user_form':user_form,
                                                         'profile_form':profile_form})
 
+
+#------------------------------------Vistas de Trabajador----------------------------------
+
 @staff_member_required
 def users(request):
     users = [x for x in User.objects.all() if(hasattr(x,'profile'))]
     user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
 
+    #Creando Paginador
+    paginator = Paginator(users,10)
+    page = request.GET.get('page')
+    users = paginator.get_page(page)
+    
     if request.method == 'POST':
-        if request.POST.get('seeall') is not None:
-             return render(request,'simpgo_app/users.html',{'users':user_without_profile})
+        pass
 
     return render(request,'simpgo_app/users.html',{'users':users,
                                                    'users_w':user_without_profile})
@@ -225,10 +242,14 @@ def all_tickets(request):
     tickets = list(Ticket.objects.filter(deleted=0).order_by('-created'))
     department = list(Department.objects.all())
 
+    #Creando Paginador
+    paginator = Paginator(tickets,7)
+    page = request.GET.get('page')
+    tickets = paginator.get_page(page)
+    
     if request.method == 'POST':
-
         if request.POST.get('ticket_id') is not None:
-
+            
             if request.POST.get('cancel') is not None:
                 for ids in request.POST.getlist('ticket_id'):
                     Ticket.objects.get(id=ids)._remove()

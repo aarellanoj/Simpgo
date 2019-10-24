@@ -58,12 +58,30 @@
                       <td>{{ticket.created|naturaltime}}</td>
                       <td>{{ticket.created_by}}</td>
                       <td>{{ticket.assigned_to}}</td>
-                      <td>{{ticket.created_by.profile.department.name}}</td>
+                      <td>{{ticket.created_by.department.name}}</td>
                       <td>{{ticket.get_status_display}}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
               </table>
+              <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                  {% if tickets.has_previous %}
+                    <a href="?page={{ tickets.previous_page_number }}" class="pagination-previous">Anterior</a>
+                  {% else %}
+                    <a class="pagination-previous" disabled >Anterior</a>
+                  {% endif %}
+  
+                  {% if tickets.has_next %}
+                    <a href="?page={{ tickets.next_page_number }}" class="pagination-next">Siguiente</a>
+                  {% else %}
+                    <a class="pagination-next" disabled >Siguiente</a>
+                  {% endif %}
+  
+                  <ul class="pagination-list">
+                    <li><a class="pagination-link is-current">Pagina {{ tickets.number }} de {{ tickets.paginator.num_pages }}</a></li>
+                  </ul>
+              </nav>
+              <hr>
               <div class="field has-addons">
                   <button type="submit" name="seeall"
                    class="button is-primary is-outlined">Historial</button>

@@ -45,7 +45,7 @@
               </div>
             </div>
             {% endif %}
-            {% if user.is_staff %}
+            {% if user.profile.is_worker %}
               {% if users_w %}
               <div class="column is-6 box">
                 <p class="title" align="center" style="color:black;">Usuarios Esperando Perfil</p>

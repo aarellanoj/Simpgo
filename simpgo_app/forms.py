@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
-from .models import Profile, Ticket, Response
+from .models import Profile, Ticket, Response, Management, Department
 
 
 #Class Forms
@@ -59,4 +59,23 @@ class ResponseForm(forms.ModelForm):
             'response': forms.Textarea(attrs={'class':'textarea','placeholder':'Respuesta',
                                               'rows':'4'}),
             'image_file': forms.FileInput(attrs={'class':'file-input'}),
+        }
+        
+class ManagementForm(forms.ModelForm):
+    class Meta():
+        model = Management
+        fields = '__all__'
+        
+        widgets = {
+            'name': forms.TextInput( attrs={'class':'input','placeholder':'Nombre de la Dirección'} ),
+        }
+        
+class DepartmentForm(forms.ModelForm):
+    class Meta():
+        model = Department
+        fields = '__all__'
+        
+        widgets = {
+            'name': forms.TextInput( attrs={'class':'input','placeholder':'Nombre del Departamento'} ),
+            'management' : forms.Select(),
         }

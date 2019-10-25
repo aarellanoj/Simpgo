@@ -9,13 +9,15 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
-from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm
+from simpgo_app.decorators import worker_member_required
 
-from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles
+from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm, ManagementForm, DepartmentForm
+
+from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles, Management
 
 #Others Functions
 def is_myticket(user,ticket):
-    if user.is_superuser or user.is_staff or user.profile.id == ticket.created_by.id:
+    if user.is_superuser or user.is_staff or user.profile.is_worker or user.profile.id == ticket.created_by.id:
         return True
     else:
         return False
@@ -163,16 +165,18 @@ def account(request,user_id):
     if request.method == 'POST':
         print(request.POST)
 
+        #Cambiar Email
         verify = account.check_password(request.POST['password'])
         if request.user == account and verify:
             if request.POST.get('email') is not None:
                 account.email = request.POST.get('email')
                 account.save()
-        elif request.user.is_staff:
+        elif request.user.profile.is_worker:
             if request.POST.get('email') is not None:
                 account.email = request.POST.get('email')
                 account.save()
-
+                
+        #Crear o Cambiar Datos de Perfil
         if not hasattr(account,'profile'):
             profile_form = ProfileForm(data=request.POST)
             if profile_form.is_valid():
@@ -194,10 +198,9 @@ def account(request,user_id):
                 account.profile.rank = request.POST.get('rank')
                 account.profile.save()
 
-    if request.user == account or request.user.is_staff:
+    if request.user == account or request.user.is_staff or request.user.profile.is_worker:
         user_form = UserForm(instance=account)
-        if request.user.is_staff:
-            print('Es Staff')
+        if request.user.profile.is_worker:
             user_form = UserForm(use_required_attribute=False,instance=account)
 
         if hasattr(account,'profile'):
@@ -213,7 +216,6 @@ def account(request,user_id):
 
 
 #------------------------------------Vistas de Trabajador----------------------------------
-
 @staff_member_required
 def users(request):
     users = [x for x in User.objects.all() if(hasattr(x,'profile'))]
@@ -233,11 +235,67 @@ def users(request):
 @staff_member_required
 def departments(request):
     management = Management.objects.all()
-    department = Department.objects.all()
-    args = {'management':management,'department':department}
+    _dict = dict()
+    for m in management:
+        d = Department.objects.filter(management=m.id)
+        _dict[m] = d
+    args = {'all':_dict}
     return render(request,'simpgo_app/department.html', args)
-    
+
 @staff_member_required
+def create_department(request):
+    if request.method == 'POST':
+        department_form = DepartmentForm(data=request.POST)
+        if department_form.is_valid():
+            department_form.save()
+            return HttpResponseRedirect(reverse('departments'))
+    else:
+        department_form = DepartmentForm()
+        
+    return render(request, 'simpgo_app/create_edit_department.html', {'department_form':department_form,})
+
+@staff_member_required 
+def create_management(request):
+    if request.method == 'POST':
+        management_form = ManagementForm(data=request.POST)
+        if management_form.is_valid():
+            management_form.save()
+            return HttpResponseRedirect(reverse('departments'))
+    else:
+        management_form = ManagementForm()
+        
+    return render(request, 'simpgo_app/create_edit_department.html', {'management_form':management_form,})
+
+@staff_member_required
+def edit_department(request,department_id):
+    department = get_object_or_404(Department,pk=department_id)
+    
+    if request.method == 'POST':
+        if request.POST.get('name') is not None:
+            department.name = request.POST.get('name')
+            department.save()
+        if request.POST.get('management') is not None:
+            department.management = get_object_or_404(Management,pk=request.POST.get('management'))
+            department.save()    
+        return HttpResponseRedirect(reverse('departments'))
+        
+    department_form = DepartmentForm(instance=department)
+    return render(request, 'simpgo_app/create_edit_department.html', {'department_form':department_form,})
+
+@staff_member_required
+def edit_management(request,management_id):
+    management = get_object_or_404(Management,pk=management_id)
+    
+    if request.method == 'POST':
+        if request.POST.get('name') is not None:
+            management.name = request.POST.get('name')
+            management.save()
+        return HttpResponseRedirect(reverse('departments'))
+    
+    management_form = ManagementForm(instance=management)
+    return render(request, 'simpgo_app/create_edit_department.html', {'management_form':management_form,})
+    
+@worker_member_required
 def all_tickets(request):
     tickets = list(Ticket.objects.filter(deleted=0).order_by('-created'))
     department = list(Department.objects.all())

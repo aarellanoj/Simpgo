@@ -109,7 +109,7 @@
     <hr>
   {% endfor %}
   <!-- Fin Respuestas al Comentario -->
-{% if user.is_staff %}
+{% if user.profile.is_worker %}
 <!-- Comentario Form -->
   <article class="media">
     <figure class="media-left">

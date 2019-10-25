@@ -1,0 +1,87 @@
+{% extends "simpgo_app/base.html" %}
+{% load humanize %}
+{% block helpdesk_head %}
+  <script language="JavaScript">
+    function toggle(source) {
+      checkboxes = document.getElementsByName('department_id');
+      for(var i=0, n=checkboxes.length;i<n;i++) {
+        checkboxes[i].checked = source.checked;
+      }
+    }
+  </script>
+{% endblock %}
+{% block after_nav %}
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            Departamentos
+        </h1>
+          <h2 class="subtitle">Modificacion y Creacion de Despartamentos</h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_body %}
+    <div class="container" style="padding:2em; margin:2em;">
+      <div class="columns">
+        <div class="column is-10 is-offset-1 is box">
+          <center>
+            <form method="POST" action="{% url 'departments' %}">{% csrf_token %}
+                <p class="title" align="center">Departamentos Disponibles</p>
+                <hr>
+              <div class="buttons is-right">
+                
+              </div>
+              <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <!-- <th><input type="checkbox" onClick="toggle(this)"/></th> -->
+                    <th>Dirección  <a href="{% url 'create_management' %}"><i class="fas fa-plus"></i></a> </th>
+                    <th>Departamentos  <a href="{% url 'create_department' %}"><i class="fas fa-plus "></i></a> </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for management, departments in all.items %}
+                  <tr>
+                    <!-- <td><input name='department_id' value='{{ department.id }}' type="checkbox"></td> -->
+                    <th>{{management}}  <a href="{% url 'edit_management' management.id %}"><i class="fas fa-edit "></i></a></th>
+                    <td>
+                      {% for department in departments %}
+                      &nbsp; {{ department.name }}  <a href="{% url 'edit_department' department.id %}"><i class="fas fa-edit "></i> </a>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              
+              <hr>
+              <!-- <div class="field has-addons">
+                  <button type="submit" name="seeall"
+                   class="button is-primary is-outlined">Historial</button>
+                   &nbsp;&nbsp;
+                  <input type="submit" class="button is-dark" name="cancel" value="Eliminar Ticket">
+                  &nbsp;&nbsp;
+                  <div class="control">
+                    <div class="select">
+                      <select name="status">
+                        <option value="0">Cambiar Estatus</option>
+                        <option value="1">Abierto</option>
+                        <option value="2">En Proceso</option>
+                        <option value="3">Cerrado</option>
+                        <option value="4">Rechazado</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <button type="submit" name="change" class="button is-info">Cambiar</button>
+                  </div>
+              </div> -->
+            </form>
+          </center>
+        </div>
+      </div>
+        
+    </div>
+{% endblock %}

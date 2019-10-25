@@ -35,8 +35,15 @@
         <div id="navbarBasicExample" class="navbar-menu">
                 {# Django Home Link / Admin Link / Register Link#}
 
-                {% if user.is_staff and user.is_authenticated %}
+                {% if user.profile.is_worker and user.is_authenticated %}
                   <div class="navbar-end">
+
+                    <a class="navbar-item" href="{% url 'departments' %}">
+                          <span class="icon has-text-primary">
+                                <i class="fas fa-hotel"></i>
+                          </span>
+                          <span>Departamentos</span>
+                    </a>
 
                     <a class="navbar-item" href="{% url 'users' %}">
                       <span class="icon has-text-primary">

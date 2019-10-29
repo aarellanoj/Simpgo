@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
+from django.shortcuts import ( render, redirect, get_object_or_404,
+                               get_list_or_404 )
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -10,10 +11,12 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
 from simpgo_app.decorators import worker_member_required
-
-from simpgo_app.forms import UserForm, ProfileForm, TicketForm, ResponseForm, ManagementForm, DepartmentForm
-
-from simpgo_app.models import Ticket, Response, Profile, Department, Job_Titles, Management
+from simpgo_app.filters import TicketFilter
+from simpgo_app.forms import ( UserForm, ProfileForm, TicketForm,
+                               ResponseForm, ManagementForm,
+                               DepartmentForm )
+from simpgo_app.models import ( Ticket, Response, Profile, Department,
+                                Job_Titles, Management )
 
 #Others Functions
 def is_myticket(user,ticket):
@@ -123,7 +126,9 @@ def ticket_view(request, ticket_id):
     
 @login_required
 def my_tickets(request):
-    tickets = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[1,2],deleted=0).order_by('-created'))
+    tickets = list(Ticket.objects.filter(
+              created_by=request.user.profile.id,
+              status__in=[1,2],deleted=0).order_by('-created'))
     
     #Creando Paginador
     paginator = Paginator(tickets,8)
@@ -252,7 +257,8 @@ def create_department(request):
     else:
         department_form = DepartmentForm()
         
-    return render(request, 'simpgo_app/create_edit_department.html', {'department_form':department_form,})
+    return render(request, 'simpgo_app/create_edit_department.html',
+                 {'department_form':department_form,})
 
 @staff_member_required 
 def create_management(request):
@@ -264,7 +270,8 @@ def create_management(request):
     else:
         management_form = ManagementForm()
         
-    return render(request, 'simpgo_app/create_edit_department.html', {'management_form':management_form,})
+    return render(request, 'simpgo_app/create_edit_department.html',
+                 {'management_form':management_form,})
 
 @staff_member_required
 def edit_department(request,department_id):
@@ -280,7 +287,8 @@ def edit_department(request,department_id):
         return HttpResponseRedirect(reverse('departments'))
         
     department_form = DepartmentForm(instance=department)
-    return render(request, 'simpgo_app/create_edit_department.html', {'department_form':department_form,})
+    return render(request, 'simpgo_app/create_edit_department.html',
+                 {'department_form':department_form,})
 
 @staff_member_required
 def edit_management(request,management_id):
@@ -293,16 +301,25 @@ def edit_management(request,management_id):
         return HttpResponseRedirect(reverse('departments'))
     
     management_form = ManagementForm(instance=management)
-    return render(request, 'simpgo_app/create_edit_department.html', {'management_form':management_form,})
+    return render(request, 'simpgo_app/create_edit_department.html',
+                 {'management_form':management_form,})
     
 @worker_member_required
 def all_tickets(request):
-    tickets = list(Ticket.objects.filter(deleted=0).order_by('-created'))
-    department = list(Department.objects.all())
-
+    tickets = Ticket.objects.filter(deleted=0).order_by('-created')
+    
+    #Filtro
+    ticket_filter = TicketFilter(request.GET,queryset=tickets)
+    print(request.GET)
+    
     #Creando Paginador
-    paginator = Paginator(tickets,7)
-    page = request.GET.get('page')
+    paginator = Paginator(ticket_filter.qs,7)
+    
+    if request.GET.get('page') is not None:
+        page = request.GET.get('page')
+    else:
+        page = 1
+        
     tickets = paginator.get_page(page)
     
     if request.method == 'POST':
@@ -323,5 +340,6 @@ def all_tickets(request):
 
         return HttpResponseRedirect('./') 
 
-    return render(request, 'simpgo_app/all_tickets.html', {'tickets':tickets,'department':department})
+    return render(request, 'simpgo_app/all_tickets.html', 
+                  {'tickets':tickets,'filter':ticket_filter})
 

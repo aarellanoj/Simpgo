@@ -38,19 +38,21 @@
                 {% if user.profile.is_worker and user.is_authenticated %}
                   <div class="navbar-end">
 
-                    <a class="navbar-item" href="{% url 'departments' %}">
-                          <span class="icon has-text-primary">
-                                <i class="fas fa-hotel"></i>
-                          </span>
-                          <span>Departamentos</span>
-                    </a>
+                    {% if user.is_staff %}
+                      <a class="navbar-item" href="{% url 'departments' %}">
+                            <span class="icon has-text-primary">
+                                  <i class="fas fa-hotel"></i>
+                            </span>
+                            <span>Departamentos</span>
+                      </a>
 
-                    <a class="navbar-item" href="{% url 'users' %}">
-                      <span class="icon has-text-primary">
-                            <i class="fas fa-users"></i>
-                      </span>
-                      <span>Usuarios</span>
-                    </a>
+                      <a class="navbar-item" href="{% url 'users' %}">
+                        <span class="icon has-text-primary">
+                              <i class="fas fa-users"></i>
+                        </span>
+                        <span>Usuarios</span>
+                      </a>
+                    {% endif %}
 
                     <a class="navbar-item" href="{% url 'all_tickets' %}">
                       <span class="icon has-text-primary">

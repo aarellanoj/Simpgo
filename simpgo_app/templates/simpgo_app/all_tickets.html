@@ -28,12 +28,18 @@
       <div class="columns">
         <div class="column is-12 box">
           <center>
+            
+            <div class="buttons is-right">
+              <form action="" method="get" id="submit">
+                {{ filter.form.as_p }}
+                &nbsp;&nbsp;
+                <button type="submit">Search</button>
+              </form>
+            </div>
+
             <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}
-                <p class="title" align="center">Solicitudes</p>
-                <hr>
-              <div class="buttons is-right">
-                
-              </div>
+              <p class="title" align="center">Solicitudes</p>
+              <hr>
               <table class="table is-narrow is-hoverable is-fullwidth">
                 <thead>
                   <tr class="">

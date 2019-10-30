@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'widget_tweaks',
+    'django_filters',
     'simpgo_app.apps.SimpgoAppConfig',
 ]
 

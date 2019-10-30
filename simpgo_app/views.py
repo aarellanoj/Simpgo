@@ -227,7 +227,7 @@ def users(request):
     user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
 
     #Creando Paginador
-    paginator = Paginator(users,10)
+    paginator = Paginator(users,15)
     page = request.GET.get('page')
     users = paginator.get_page(page)
     
@@ -310,10 +310,8 @@ def all_tickets(request):
     
     #Filtro
     ticket_filter = TicketFilter(request.GET,queryset=tickets)
-    print(request.GET)
-    
     #Creando Paginador
-    paginator = Paginator(ticket_filter.qs,7)
+    paginator = Paginator(ticket_filter.qs,10)
     
     if request.GET.get('page') is not None:
         page = request.GET.get('page')

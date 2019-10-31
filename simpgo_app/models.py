@@ -11,6 +11,13 @@ class Management(models.Model):
         "Nombre de la Direccion",
         max_length=100,
     )
+    
+    management_chief = models.OneToOneField(
+        'Profile',
+        related_name='+',
+        on_delete=models.CASCADE,
+        verbose_name="Encargado del Dirección",
+    )
 
     def __str__(self):
         return self.name
@@ -23,6 +30,13 @@ class Department(models.Model):
         max_length=100,
     )
 
+    department_chief = models.OneToOneField(
+        'Profile',
+        related_name='+',
+        on_delete=models.CASCADE,
+        verbose_name="Encargado del Departamento",
+    )
+    
     management = models.ForeignKey(
         Management,
         on_delete=models.CASCADE,
@@ -79,23 +93,6 @@ class Profile(models.Model):
         Department,
         on_delete=models.CASCADE,
         verbose_name="Departamento al que Pertenece",
-    )
-    
-    management_chief = models.OneToOneField(
-        Management,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="Direccion Encargado",
-    )
-    
-    department_chief = models.OneToOneField(
-        Department,
-        related_name='+',
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="Departamento Encargado",
     )
 
     job_title = models.ForeignKey(

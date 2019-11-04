@@ -109,6 +109,23 @@
     <hr>
   {% endfor %}
   <!-- Fin Respuestas al Comentario -->
+  {% if user.profile.is_superviser %}
+    <div class="buttons" style="margin:1em;">
+        <a class="button is-primary" href="{% url 'supervised_accept' ticket.id %}">
+            <span class="icon is-small">
+              <i class="fas fa-thumbs-up"></i>
+            </span>
+            <span>Procede La Solicitud</span>
+          </a>
+        <a class="button is-warning" href="{% url 'supervised_decline' ticket.id %}">
+          <span class="icon is-small">
+            <i class="fas fa-thumbs-down"></i>
+          </span>
+          <span>Rechazar Solicitud</span>
+        </a>
+    </div>
+  {% endif %}
+
 {% if user.profile.is_worker %}
 <!-- Comentario Form -->
   <article class="media">

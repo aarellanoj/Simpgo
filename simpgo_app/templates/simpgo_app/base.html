@@ -43,16 +43,23 @@
                             <span class="icon has-text-primary">
                                   <i class="fas fa-hotel"></i>
                             </span>
-                            <span>Departamentos</span>
+                            <span> Departamentos</span>
                       </a>
 
                       <a class="navbar-item" href="{% url 'users' %}">
                         <span class="icon has-text-primary">
                               <i class="fas fa-users"></i>
                         </span>
-                        <span>Usuarios</span>
+                        <span> Usuarios</span>
                       </a>
                     {% endif %}
+
+                    <a class="navbar-item" href="{% url 'create_user' %}">
+                        <span class="icon has-text-primary">
+                              <i class="fas fa-user-plus"></i>
+                        </span>
+                        <span> Creación Usuarios</span>
+                    </a>
 
                     <a class="navbar-item" href="{% url 'all_tickets' %}">
                       <span class="icon has-text-primary">

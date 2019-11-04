@@ -10,7 +10,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
-from simpgo_app.decorators import worker_member_required
+from simpgo_app.decorators import worker_member_required, superviser_member_required
 from simpgo_app.filters import TicketFilter
 from simpgo_app.forms import ( UserForm, ProfileForm, TicketForm,
                                ResponseForm, ManagementForm,
@@ -20,7 +20,11 @@ from simpgo_app.models import ( Ticket, Response, Profile, Department,
 
 #Others Functions
 def is_myticket(user,ticket):
-    if user.is_superuser or user.is_staff or user.profile.is_worker or user.profile.id == ticket.created_by.id:
+    if (user.is_superuser 
+        or user.is_staff 
+        or user.profile.is_worker()
+        or user.profile.id == ticket.created_by.id 
+        or (user.profile.is_superviser() and ticket.created_by.department == user.profile.department)):
         return True
     else:
         return False
@@ -150,7 +154,7 @@ def my_tickets(request):
 @login_required
 def my_tickets_pro(request):
     tickets_pro = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created'))
-    paginator = Paginator(tickets_pro, 8) # Show 25 contacts per page
+    paginator = Paginator(tickets_pro, 8)
     page = request.GET.get('page')
     tickets_pro = paginator.get_page(page)
     return render(request, 'simpgo_app/my_tickets.html', { 'tickets_pro': tickets_pro })
@@ -158,7 +162,7 @@ def my_tickets_pro(request):
 @login_required
 def my_tickets_history(request):
     history = list(Ticket.objects.filter(created_by=request.user.profile.id).order_by('-created'))
-    paginator = Paginator(history, 8) # Show 25 contacts per page
+    paginator = Paginator(history, 8)
     page = request.GET.get('page')
     history = paginator.get_page(page)
     return render(request, 'simpgo_app/my_tickets.html', {'history':history,})
@@ -283,7 +287,10 @@ def edit_department(request,department_id):
             department.save()
         if request.POST.get('management') is not None:
             department.management = get_object_or_404(Management,pk=request.POST.get('management'))
-            department.save()    
+            department.save()
+        if request.POST.get('department_chief') is not None:
+            department.department_chief = get_object_or_404(Profile,pk=request.POST.get('department_chief'))
+            department.save()
         return HttpResponseRedirect(reverse('departments'))
         
     department_form = DepartmentForm(instance=department)
@@ -298,6 +305,9 @@ def edit_management(request,management_id):
         if request.POST.get('name') is not None:
             management.name = request.POST.get('name')
             management.save()
+        if request.POST.get('management_chief') is not None:
+            management.management_chief = get_object_or_404(Profile,pk=request.POST.get('management_chief'))
+            management.save()
         return HttpResponseRedirect(reverse('departments'))
     
     management_form = ManagementForm(instance=management)
@@ -306,7 +316,7 @@ def edit_management(request,management_id):
     
 @worker_member_required
 def all_tickets(request):
-    tickets = Ticket.objects.filter(deleted=0).order_by('-created')
+    tickets = Ticket.objects.filter(deleted=0,supervised=1).order_by('-created')
     
     #Filtro
     ticket_filter = TicketFilter(request.GET,queryset=tickets)
@@ -340,4 +350,60 @@ def all_tickets(request):
 
     return render(request, 'simpgo_app/all_tickets.html', 
                   {'tickets':tickets,'filter':ticket_filter})
+    
+@worker_member_required
+def create_user(request):
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = ProfileForm(data=request.POST)
+        if user_form.is_valid():
+            if profile_form.is_valid():
+                user = user_form.save()
+                profile = profile_form.save(commit=False)
+                profile.user = user
+                profile.save()
+                HttpResponseRedirect('users')
+            else:
+                print(user_form.errors)
+    else:
+        user_form = UserForm()
+        profile_form = ProfileForm()
+        
+    return render(
+        request,
+        'simpgo_app/create_user.html',
+        {'user_form':user_form,
+         'profile_form':profile_form,
+        }
+    )
+    
+@superviser_member_required
+def supervise_ticket(request):
 
+    dep_worker = Profile.objects.filter(
+                    department=request.user.profile.department
+                 )
+    
+    tickets_sup = Ticket.objects.filter(
+                    created_by__in = list(dep_worker),
+                    deleted=0,
+                    supervised=0,
+                  )
+    
+    paginator = Paginator(list(tickets_sup),15)
+    page = request.GET.get('page')
+    tickets_sup = paginator.get_page(page)
+    
+    return render(request, 'simpgo_app/my_tickets.html', {'tickets_sup':tickets_sup,})
+
+@superviser_member_required
+def supervised_botton_accept(request,ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    ticket._already_supervised()
+    return HttpResponseRedirect(reverse('supervise_ticket'))
+
+@superviser_member_required
+def supervised_botton_decline(request,ticket_id):
+    ticket = get_object_or_404(Ticket, pk=ticket_id)
+    ticket._remove()
+    return HttpResponseRedirect(reverse('supervise_ticket'))

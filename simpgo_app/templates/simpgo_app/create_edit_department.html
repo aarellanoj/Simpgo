@@ -30,6 +30,14 @@
                           </div>
                         </div>
                     </div>
+                    <div class="field">
+                      <label class="label" for="{{ department_form.department_chief.id_for_label }}">{{ department_form.department_chief.label }}:</label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                          {{department_form.department_chief}}
+                        </div>
+                      </div>
+                    </div>
                     <hr>
                     <div class="control">
                         <input type="submit" class="button is-primary is-fullwidth" name="" value="Guardar">
@@ -47,6 +55,14 @@
                     <div class="field">
                         <label class="label" for="{{ management_form.name.id_for_label }}">{{ management_form.name.label }}:</label>
                         {{management_form.name}}
+                    </div>
+                    <div class="field">
+                      <label class="label" for="{{ management_form.management_chief.id_for_label }}">{{ management_form.management_chief.label }}:</label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                          {{management_form.management_chief}}
+                        </div>
+                      </div>
                     </div>
                     <hr>
                     <div class="control">

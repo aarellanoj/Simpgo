@@ -67,7 +67,8 @@ class ManagementForm(forms.ModelForm):
         fields = '__all__'
         
         widgets = {
-            'name': forms.TextInput( attrs={'class':'input','placeholder':'Nombre de la Dirección'} ),
+            'name': forms.TextInput(attrs={'class':'input','placeholder':'Nombre de la Dirección'}),
+            'management_chief' : forms.Select(),
         }
         
 class DepartmentForm(forms.ModelForm):
@@ -76,6 +77,7 @@ class DepartmentForm(forms.ModelForm):
         fields = '__all__'
         
         widgets = {
-            'name': forms.TextInput( attrs={'class':'input','placeholder':'Nombre del Departamento'} ),
+            'name': forms.TextInput(attrs={'class':'input','placeholder':'Nombre del Departamento'}),
             'management' : forms.Select(),
+            'department_chief' : forms.Select(),
         }

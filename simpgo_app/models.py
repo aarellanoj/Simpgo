@@ -16,7 +16,9 @@ class Management(models.Model):
         'Profile',
         related_name='+',
         on_delete=models.CASCADE,
-        verbose_name="Encargado del Dirección",
+        null=True,
+        blank=True,
+        verbose_name="Encargado de la Dirección",
     )
 
     def __str__(self):
@@ -34,6 +36,8 @@ class Department(models.Model):
         'Profile',
         related_name='+',
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
         verbose_name="Encargado del Departamento",
     )
     
@@ -115,11 +119,19 @@ class Profile(models.Model):
     )
     
     def is_worker(self):
-        if self.rank == 3 or self.rank == 4:
+        if self.rank in [3,4]:
             return True
         else:
             return False
-
+        
+    def is_superviser(self):
+        departments = list(Department.objects.all())
+        x = False
+        for department in departments:
+            if self.user == department.department_chief.user:
+                x = True
+        return x        
+        
     def __str__(self):
         return self.user.get_full_name()
 
@@ -223,12 +235,27 @@ class Ticket(models.Model):
         null=True,
         blank=True,
     )
+    
+    supervised = models.BooleanField(
+        "Fue Supervisado",
+        default=False,
+    )
 
     deleted = models.BooleanField(
         "Eliminar Ticket",
         default=False,
     )
-
+    
+    def is_supervised(self):
+        if self.supervised:
+            return True
+        else:
+            return False
+        
+    def _already_supervised(self, *args, **kwargs):
+        self.supervised = True
+        return super(Ticket, self).save(*args,**kwargs)
+        
     def _change_status_to(self,new_status,*args, **kwargs):
         self.status = new_status
         return super(Ticket, self).save(*args,**kwargs)

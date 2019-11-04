@@ -1,0 +1,43 @@
+{% extends "simpgo_app/base.html" %}
+{% block after_nav %}
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            Creación de Usuarios
+        </h1>
+          <h2 class="subtitle"></h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_block %}
+  <div class="container" style="padding:2em; margin:2em;">
+    <div class="columns">
+      <div class="column is-6 is-offset-3 box">
+        <form enctype="multipart/form-data" action="./" method="POST">{% csrf_token %}
+            {% for field in user_form %}
+                <div class="field">
+                <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                {{field}}
+                </div>
+            {% endfor %}
+          	{% for field in profile_form %}
+          		<div class="field">
+          			<label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+          			<div class="control">
+		              <div class="select is-fullwidth">
+		              	{{field}}
+		              </div>
+		            </div>
+          		</div>
+          	{% endfor %}
+          <hr>
+          <div class="control">
+              <input type="submit" class="button is-primary is-fullwidth" name="" value="Crear">
+          </div>
+        </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

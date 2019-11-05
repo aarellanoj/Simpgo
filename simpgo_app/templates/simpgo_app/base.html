@@ -11,7 +11,7 @@
     {% block helpdesk_head %}
     {% endblock %}
   </head>
-  <body>
+  <body style="height:746px;">
     <nav class="navbar is-spaced is-dark" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
 
@@ -52,6 +52,15 @@
                         </span>
                         <span> Usuarios</span>
                       </a>
+                    {% endif %}
+
+                    {%  if user.profile.is_superviser  %}
+                      <a class="navbar-item" href="{% url 'supervise_ticket' %}">
+                          <span class="icon has-text-primary">
+                                <i class="fas fa-user-plus"></i>
+                          </span>
+                          <span> Supervisación de Tickets</span>
+                      </a>  
                     {% endif %}
 
                     <a class="navbar-item" href="{% url 'create_user' %}">
@@ -100,6 +109,15 @@
 
                 {% elif user.is_authenticated %}
                   <div class="navbar-end">
+
+                      {%  if user.profile.is_superviser  %}
+                        <a class="navbar-item" href="{% url 'supervise_ticket' %}">
+                            <span class="icon has-text-primary">
+                                  <i class="fas fa-eye"></i>
+                            </span>
+                            <span> Supervisación de Tickets</span>
+                        </a>  
+                      {% endif %}
 
                       <a class="navbar-item" href="{% url 'my_tickets' %}">
                         <span class="icon has-text-primary">

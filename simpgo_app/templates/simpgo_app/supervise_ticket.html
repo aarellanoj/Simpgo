@@ -1,0 +1,75 @@
+{% extends "simpgo_app/base.html" %}
+{% load humanize %}
+{% block after_nav %}
+  <section class="hero is-primary is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+            Supervisión de Tickets
+        </h1>
+          <h2 class="subtitle">Departamento -> {{ user.profile.is_superviser.name }}</h2>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+{% block body_body %}
+{% if tickets_sup %}
+  <div class="container" style="padding:2em; margin:2em;">
+      <div class="columns">
+        <div class="column is-8 is-offset-2">
+          <center>
+            <form method="POST" action="{% url 'my_tickets' %}">{% csrf_token %}
+                <p class="title" align="center">Supervisión de Solcitudes</p>
+                <hr>
+              <table class="table is-narrow is-hoverable is-fullwidth">
+                <thead>
+                  <tr class="">
+                    <th>ID</th>
+                    <th>Titulo</th>
+                    <th>Asignado a</th>
+                    <th>Creado</th>
+                    <th>Estatus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ticket in tickets_sup %}
+                    <tr>
+                      <th>{{ticket.id}}</th>
+                      <td><a href="{% url 'ticket_view' ticket.id %}" title="{{ticket.title}}">{{ticket.title}}</a> </td>
+                      <td>{{ticket.assigned_to}}</td>
+                      <td>{{ticket.created|naturaltime}}</td>
+                      <td>{{ticket.get_status_display}}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                {% if tickets_sup.has_previous %}
+                  <a href="?page={{ tickets_sup.previous_page_number }}" class="pagination-previous">Anterior</a>
+                {% else %}
+                  <a class="pagination-previous" disabled >Anterior</a>
+                {% endif %}
+
+                {% if tickets_sup.has_next %}
+                  <a href="?page={{ tickets_sup.next_page_number }}" class="pagination-next">Siguiente</a>
+                {% else %}
+                  <a class="pagination-next" disabled >Siguiente</a>
+                {% endif %}
+
+                <ul class="pagination-list">
+                  <li><a class="pagination-link is-current">Pagina {{ tickets_sup.number }} de {{ tickets_sup.paginator.num_pages }}</a></li>
+                </ul>
+              </nav>
+            </form>
+          </center>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if not tickets_sup %}
+          <div class="notification is-primary is-fullwidth is-fullheight" style="padding:2em; margin:2em;">
+            <h3 class="is-title is-3">Felicidades No Tienes Ningun Ticket Para Supervisión.</h3>
+          </div>
+      {% endif %}
+    </div>
+{% endblock %}

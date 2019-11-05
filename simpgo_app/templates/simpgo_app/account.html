@@ -6,7 +6,9 @@
         <h1 class="title">
             {{ account.get_full_name }}
         </h1>
-          <h2 class="subtitle">Cuenta #{{account.id}} </h2>
+          <h2 class="subtitle">
+            Departamento: {{ account.profile.department.name }} - Cargo: {{ account.profile.job_title }} 
+          </h2>
       </div>
     </div>
   </section>

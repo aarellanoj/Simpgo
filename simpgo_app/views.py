@@ -24,7 +24,7 @@ def is_myticket(user,ticket):
         or user.is_staff 
         or user.profile.is_worker()
         or user.profile.id == ticket.created_by.id 
-        or (user.profile.is_superviser() and ticket.created_by.department == user.profile.department)):
+        or (user.profile.is_superviser() == ticket.created_by.department)):
         return True
     else:
         return False
@@ -381,7 +381,7 @@ def create_user(request):
 def supervise_ticket(request):
 
     dep_worker = Profile.objects.filter(
-                    department=request.user.profile.department
+                    department=request.user.profile.is_superviser()
                  )
     
     tickets_sup = Ticket.objects.filter(
@@ -394,7 +394,7 @@ def supervise_ticket(request):
     page = request.GET.get('page')
     tickets_sup = paginator.get_page(page)
     
-    return render(request, 'simpgo_app/my_tickets.html', {'tickets_sup':tickets_sup,})
+    return render(request, 'simpgo_app/supervise_ticket.html', {'tickets_sup':tickets_sup,})
 
 @superviser_member_required
 def supervised_botton_accept(request,ticket_id):

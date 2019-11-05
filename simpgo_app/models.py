@@ -127,10 +127,11 @@ class Profile(models.Model):
     def is_superviser(self):
         departments = list(Department.objects.all())
         x = False
+        d = None
         for department in departments:
             if self.user == department.department_chief.user:
-                x = True
-        return x        
+                x = department
+        return x      
         
     def __str__(self):
         return self.user.get_full_name()

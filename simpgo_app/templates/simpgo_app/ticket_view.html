@@ -109,7 +109,7 @@
     <hr>
   {% endfor %}
   <!-- Fin Respuestas al Comentario -->
-  {% if user.profile.is_superviser %}
+  {% if user.profile.is_superviser and not ticket.is_supervised and not ticket.deleted %}
     <div class="buttons" style="margin:1em;">
         <a class="button is-primary" href="{% url 'supervised_accept' ticket.id %}">
             <span class="icon is-small">
@@ -126,7 +126,7 @@
     </div>
   {% endif %}
 
-{% if user.profile.is_worker %}
+{% if user.profile.is_worker and ticket.is_supervised %}
 <!-- Comentario Form -->
   <article class="media">
     <figure class="media-left">

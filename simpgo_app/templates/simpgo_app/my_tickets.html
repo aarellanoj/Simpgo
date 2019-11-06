@@ -32,12 +32,36 @@
 {% block body_body %}
   {% if user.is_authenticated %}
 
-    <div class="container" style="padding:0.5em 2em 2em 2em; margin:0em 2em 2em 2em;">
+    <div class="container" style="padding:1em 2em 2em 2em; margin:0em 2em 2em 2em;">
         <div class="tabs">
             <ul>
-              <li {% if 'in-process' in request.get_full_path %} class="is-active" {% endif %} ><a href="{% url 'my_tickets' %}" >Solicitudes Pendientes</a></li>
-              <li {% if 'processed' in request.get_full_path %} class="is-active" {% endif %}  ><a href="{% url 'my_tickets_pro' %}" >Solicitudas Procesadas</a></li>
-              <li {% if 'history' in request.get_full_path %} class="is-active" {% endif %} ><a href="{% url 'my_tickets_history' %}" >Historial Completo</a></li>
+              <li {% if 'in-process' in request.get_full_path %} class="is-active" {% endif %} >
+                <a href="{% url 'my_tickets' %}">
+                  {% if not badge_pen or 'in-process' in request.get_full_path %}
+                    Solicitudas Pendientes
+                  {% else %}
+                    <span class="has-badge-rounded has-badge-success" data-badge="{{ badge_pen.count }}">
+                      Solicitudas Pendientes
+                    </span>
+                  {% endif %}
+                </a>
+              </li>
+              <li {% if 'processed' in request.get_full_path %} class="is-active" {% endif %}  >
+                <a href="{% url 'my_tickets_pro' %}">
+                  {% if not badge_pro or 'processed' in request.get_full_path %}
+                    Solicitudas Procesadas
+                  {% else %}
+                    <span class="has-badge-rounded has-badge-success" data-badge="{{ badge_pro.count }}">
+                      Solicitudas Procesadas
+                    </span>
+                  {% endif %}
+                </a>
+              </li>
+              <li {% if 'history' in request.get_full_path %} class="is-active" {% endif %} >
+                <a href="{% url 'my_tickets_history' %}">
+                  Historial
+                </a>
+              </li>
             </ul>
           </div>
       {% if tickets_pro %}

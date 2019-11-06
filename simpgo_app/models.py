@@ -303,7 +303,12 @@ class Ticket(models.Model):
 
         self.assigned_to = winner['worker']
         return super(Ticket, self).save(*args,**kwargs)
-
+    
+    def _re_assign_ticket(self,id_worker,*args,**kwargs):
+        worker = Profile.objects.get(id=id_worker)
+        self.assigned_to = worker
+        return super(Ticket, self).save(*args,**kwargs)
+        
     def __str__(self):
         return self.title
 

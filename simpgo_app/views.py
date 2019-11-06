@@ -98,9 +98,14 @@ def ticket_view(request, ticket_id):
     if not is_myticket(request.user, ticket):
         raise PermissionDenied()
 
+    #Equipo al Que se le puede Reasignar
+    available_staff = [x for x in Profile.objects.filter(department=ticket.description.department) if x.is_worker()]
+    
     #Verificamos el Formulario de Respuesta
     if request.method == 'POST':
 
+        print(request.POST)
+        
         if request.POST.get('response') is not None:
             response_form = ResponseForm(data=request.POST)
             if response_form.is_valid():
@@ -117,6 +122,10 @@ def ticket_view(request, ticket_id):
             value = int(request.POST.get('status'))
             if value in [1,2,3,4]:
                 ticket._change_status_to(value)
+        
+        if request.POST.get('assign_button') is not None:
+            value = int(request.POST.get('assign'))
+            ticket._re_assign_ticket(value)
 
         return HttpResponseRedirect('./')
 
@@ -126,13 +135,19 @@ def ticket_view(request, ticket_id):
     return render(request, 'simpgo_app/ticket_view.html',
                             {'ticket':ticket,
                             'responses': responses,
-                            'response_form':response_form,})
+                            'response_form':response_form,
+                            'staff': available_staff})
     
 @login_required
 def my_tickets(request):
     tickets = list(Ticket.objects.filter(
               created_by=request.user.profile.id,
               status__in=[1,2],deleted=0).order_by('-created'))
+
+    badge_pen = Ticket.objects.filter(
+                created_by=request.user.profile.id,
+                status__in=[1,2],deleted=0).order_by('-created')
+    badge_pro = Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created')
     
     #Creando Paginador
     paginator = Paginator(tickets,8)
@@ -149,23 +164,42 @@ def my_tickets(request):
 
         return HttpResponseRedirect('./')
 
-    return render( request, 'simpgo_app/my_tickets.html', {'tickets':tickets} )
+    return render( request, 'simpgo_app/my_tickets.html', {'tickets':tickets,
+                                                           'badge_pen':badge_pen,
+                                                           'badge_pro': badge_pro} )
 
 @login_required
 def my_tickets_pro(request):
+    #Badge
+    badge_pen = Ticket.objects.filter(
+                created_by=request.user.profile.id,
+                status__in=[1,2],deleted=0).order_by('-created')
+    badge_pro = Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created')
+    
+    #All
     tickets_pro = list(Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created'))
     paginator = Paginator(tickets_pro, 8)
     page = request.GET.get('page')
     tickets_pro = paginator.get_page(page)
-    return render(request, 'simpgo_app/my_tickets.html', { 'tickets_pro': tickets_pro })
+    return render(request, 'simpgo_app/my_tickets.html', {'tickets_pro': tickets_pro, 
+                                                          'badge_pen':badge_pen,
+                                                          'badge_pro': badge_pro})
 
 @login_required
 def my_tickets_history(request):
+    #Badge
+    badge_pen = Ticket.objects.filter(
+                created_by=request.user.profile.id,
+                status__in=[1,2],deleted=0).order_by('-created')
+    badge_pro = Ticket.objects.filter(created_by=request.user.profile.id,status__in=[3,4],deleted=0).order_by('-created')
+    
     history = list(Ticket.objects.filter(created_by=request.user.profile.id).order_by('-created'))
     paginator = Paginator(history, 8)
     page = request.GET.get('page')
     history = paginator.get_page(page)
-    return render(request, 'simpgo_app/my_tickets.html', {'history':history,})
+    return render(request, 'simpgo_app/my_tickets.html', {'history':history,
+                                                          'badge_pen':badge_pen,
+                                                           'badge_pro': badge_pro} )
 
 @login_required
 def account(request,user_id):

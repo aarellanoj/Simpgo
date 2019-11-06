@@ -4,9 +4,9 @@
     <div class="hero-body">
       <div class="container">
         <h1 class="title">
-            {{ ticket.title }}
+            #{{ ticket.id }} .- {{ ticket.title }}
         </h1>
-          <h2 class="subtitle">Ticket #{{ticket.id}} </h2>
+          <h2 class="subtitle">Tipo de Falla -> {{ticket.description}} </h2>
       </div>
     </div>
   </section>
@@ -109,7 +109,7 @@
     <hr>
   {% endfor %}
   <!-- Fin Respuestas al Comentario -->
-  {% if user.profile.is_superviser and not ticket.is_supervised and not ticket.deleted %}
+  {% if user.profile.is_superviser == ticket.created_by.department and not ticket.is_supervised and not ticket.deleted %}
     <div class="buttons" style="margin:1em;">
         <a class="button is-primary" href="{% url 'supervised_accept' ticket.id %}">
             <span class="icon is-small">
@@ -160,6 +160,22 @@
           <div class="control">
             <button type="submit" name="change" class="button is-info">Cambiar</button>
           </div>
+          &nbsp;&nbsp;
+          {% if user.is_staff %}
+            <div class="control">
+              <div class="select">
+                <select name="assign">
+                    <option value="">Equipo de {{ ticket.description.department.name }}</option>
+                  {% for worker in staff %}
+                    <option value="{{ worker.id }}">{{ worker }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="control">
+              <button type="submit" name="assign_button" class="button is-info">Asignar</button>
+            </div>
+          {% endif %}
         </div>
       </form>
     </div>

@@ -85,7 +85,8 @@
                     <th>Creado</th>
                     <th>Creado Por</th>
                     <th>Asignado a</th>
-                    <th>Departamento</th>
+                    <th>De Depto</th>
+                    <th>Para Depto</th>
                     <th>Estatus</th>
                   </tr>
                 </thead>
@@ -100,6 +101,7 @@
                       <td>{{ticket.created_by.user.username}}</td>
                       <td>{{ticket.assigned_to}}</td>
                       <td>{{ticket.created_by.department.name}}</td>
+                      <td>{{ticket.description.department.name}}</td>
                       <td>{{ticket.get_status_display}}</td>
                     </tr>
                   {% endfor %}

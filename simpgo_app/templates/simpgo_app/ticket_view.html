@@ -1,4 +1,25 @@
 {% extends "simpgo_app/base.html" %}
+{% block helpdesk_head %}
+  <script language="JavaScript">
+
+    function showImage() {
+      document.getElementById('imageModal').classList.add('is-active');
+    }
+    function hideImage() {
+      document.getElementById('imageModal').classList.remove('is-active');
+    }
+
+    function showResponse(id) {
+      var elem = 'responseModal' + id
+      document.getElementById(elem).classList.add('is-active');
+    }
+    function hideResponse(id) {
+      var elem = 'responseModal' + id
+      document.getElementById(elem).classList.remove('is-active');
+    }
+
+  </script>
+{% endblock %}
 {% block after_nav %}
   <section class="hero is-primary is-bold">
     <div class="hero-body">
@@ -12,26 +33,6 @@
   </section>
 {% endblock %}
 {% block body_block %}
-<!--     <div class="buttons has-addons is-right" style="margin-top:10px;">
-        <a class="button is-primary is-outlined">
-          <span class="icon is-small">
-            <i class="fas fa-hand-paper"></i>
-          </span>
-          <span>Tomar</span>
-        </a>
-        <a class="button is-info is-outlined">
-          <span class="icon is-small">
-            <i class="fas fa-hand-holding"></i>
-          </span>
-          <span>Soltar</span>
-        </a>
-        <a class="button is-danger is-outlined">
-          <span class="icon is-small">
-            <i class="fas fa-thumbs-down"></i>
-          </span>
-          <span>Rechazar</span>
-        </a>
-    </div> -->
     <div class="container box" style="padding:2em; margin:2em 2em 0.5em 2em;">
         <nav class="level">
           <div class="level-item has-text-centered">
@@ -77,6 +78,19 @@
             <br>
             {{ticket.content}}
             <br>
+            {% if ticket.image_file %}
+              <br>
+              <input type="button" class="button is-link is-rounded" onClick="showImage();" value="Ver Imagen"/>
+              <div class="modal" id="imageModal">
+                <div class="modal-background"></div>
+                <div class="modal-content" style="width:72%;" >
+                  <p class="image">
+                    <img src="{{ ticket.image_file.url }}" alt="">
+                  </p>
+                </div>
+                <button class="modal-close is-large" onClick="hideImage();" aria-label="close"></button>
+              </div>
+            {% endif %}
           </p>
         </div>
       </div>
@@ -102,6 +116,19 @@
               {{r.response}}
               <br>
               <small><a href="#id_response">Responder</a></small>
+              {% if r.image_file %}
+                <br><br>
+                <input type="button" class="button is-link is-rounded" onClick="showResponse({{r.id}});" value="Ver Imagen"/>
+                <div class="modal" id="responseModal{{r.id}}">
+                  <div class="modal-background"></div>
+                  <div class="modal-content" style="width:72%;" >
+                    <p class="image">
+                      <img src="{{ r.image_file.url }}" alt="">
+                    </p>
+                  </div>
+                  <button class="modal-close is-large" onClick="hideResponse({{r.id}});" aria-label="close"></button>
+                </div>
+              {% endif %} 
             </p>
           </div>
         </div>
@@ -135,13 +162,27 @@
       </p>
     </figure>
     <div class="media-content">
-      <form method="post" action="{% url 'ticket_view' ticket.id %}">{% csrf_token %}
+      <form method="post" enctype="multipart/form-data" action="{% url 'ticket_view' ticket.id %}">{% csrf_token %}
         <div class="field">
           <p class="control">
             {{response_form.response}}
           </p>
         </div>
         <div class="field has-addons">
+            <div class="file">
+                <label class="file-label">
+                    {{response_form.image_file}}
+                    <span class="file-cta">
+                        <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                            Seleccione un Archivo...
+                        </span>
+                    </span>
+                </label>
+            </div>
+            &nbsp;&nbsp;
           <button type="submit" name="comment" class="button is-primary">Comentar</button>
           &nbsp;&nbsp;
           <button type="submit" name="comment/close" class="button is-warning">Comentar/Cerrar</button>

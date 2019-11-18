@@ -2,8 +2,14 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
-# Create your models here.
 
+def ticket_directory_path(instance, filename):
+    return 'ticket-images/ticket_{0}_images/image_{1}'.format(instance.id, filename)
+
+def response_ticket_directory_path(instance, filename):
+    return 'ticket-images/ticket_{0}_images/response_image_{1}'.format(instance.ticket.id, filename)
+
+# Create your models here.
 class Management(models.Model):
     """Comments"""
 
@@ -232,6 +238,7 @@ class Ticket(models.Model):
 
     image_file = models.ImageField(
         "Imagen",
+        upload_to=ticket_directory_path,
         max_length=250,
         null=True,
         blank=True,
@@ -246,6 +253,18 @@ class Ticket(models.Model):
         "Eliminar Ticket",
         default=False,
     )
+    
+    # Model Save override 
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            saved_image = self.image_file
+            self.image_file = None
+            super(Ticket, self).save(*args, **kwargs)
+            self.image_file = saved_image
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Ticket, self).save(*args, **kwargs)
     
     def is_supervised(self):
         if self.supervised:
@@ -308,7 +327,7 @@ class Ticket(models.Model):
         worker = Profile.objects.get(id=id_worker)
         self.assigned_to = worker
         return super(Ticket, self).save(*args,**kwargs)
-        
+    
     def __str__(self):
         return self.title
 
@@ -334,6 +353,7 @@ class Response(models.Model):
 
     image_file = models.ImageField(
         "Imagen",
+        upload_to=response_ticket_directory_path,
         max_length=250,
         null=True,
         blank=True,

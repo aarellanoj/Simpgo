@@ -36,39 +36,68 @@
             <form action="" method="GET">
               <div class="field is-grouped">
                   <p class="control is-expanded">
+                      <label class="label" for="">&nbsp;</label>
                     {% render_field filter.form.id class="input" placeholder="#ID" %}
                   </p>
                   <p class="control is-expanded">
+                      <label class="label" for="">&nbsp;</label>
                     {% render_field filter.form.title class="input" placeholder="Contiene el Titulo..." %}
                   </p>
                   <p class="control is-expanded">
+                      <label class="label" for="">&nbsp;</label>
                       {% render_field filter.form.created_by__user__username class="input" placeholder="Creado Por..." %}
                   </p>
+                  {% if user.is_staff %}
                   <div class="field">
                       <div class="control">
+                        <label class="label" for="">Asignado:</label>
                         <div class="select is-fullwidth">
                             {% render_field filter.form.assigned_to %}
                         </div>
                       </div>
                   </div>
                   &nbsp;&nbsp;
+                  {% endif %}
                   <div class="field">
                       <div class="control">
+                        <label class="label" for="">Creado En:</label>
                         <div class="select is-fullwidth">
                             {% render_field filter.form.created_by__department %}
                         </div>
                       </div>
                   </div>
-                  &nbsp;&nbsp;    
+                  &nbsp;&nbsp;
+                  {% if user.is_staff %}   
                   <div class="field">
                       <div class="control">
+                        <label class="label" for="">Para Depto:</label>
+                        <div class="select is-fullwidth">
+                            {% render_field filter.form.assigned_to__department %}
+                        </div>
+                      </div>
+                  </div>
+                  &nbsp;&nbsp; 
+                  <div class="field">
+                      <div class="control">
+                        <label class="label" for="">Estatus:</label>
                         <div class="select is-fullwidth">
                             {% render_field filter.form.status %}
                         </div>
                       </div>
                   </div>
                   &nbsp;&nbsp;
+                  <div class="field">
+                      <div class="control">
+                        <label class="label" for="">Eliminado:</label>
+                        <div class="select is-fullwidth">
+                            {% render_field filter.form.deleted %}
+                        </div>
+                      </div>
+                  </div>
+                  &nbsp;&nbsp;
+                  {% endif %}
                   <p class="control">
+                      <label class="label" for="">&nbsp;</label>
                     <button type="submit" class="button is-info">Filtrar</button>
                   </p>
               </div>
@@ -84,10 +113,17 @@
                     <th>Prioridad</th>
                     <th>Creado</th>
                     <th>Creado Por</th>
-                    <th>Asignado a</th>
+                    {% if user.is_staff %}
+                      <th>Asignado a</th>
+                    {% endif %}
                     <th>De Depto</th>
-                    <th>Para Depto</th>
+                    {% if user.is_staff %}
+                      <th>Para Depto</th>
+                    {% endif %}
                     <th>Estatus</th>
+                    {% if user.is_staff %}
+                        <th>Eliminado</th>
+                    {% endif %}
                   </tr>
                 </thead>
                 <tbody>
@@ -99,10 +135,17 @@
                       <td>{{ticket.get_priority_display}}</td>
                       <td>{{ticket.created|naturaltime}}</td>
                       <td>{{ticket.created_by.user.username}}</td>
-                      <td>{{ticket.assigned_to}}</td>
+                      {% if user.is_staff %}
+                        <td>{{ticket.assigned_to}}</td>
+                      {% endif %}
                       <td>{{ticket.created_by.department.name}}</td>
-                      <td>{{ticket.description.department.name}}</td>
+                      {% if user.is_staff %}
+                        <td>{{ticket.description.department.name}}</td>
+                      {% endif %}
                       <td>{{ticket.get_status_display}}</td>
+                      {% if user.is_staff %}
+                        <td>{{ ticket.deleted }}</td>
+                      {% endif %}
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -134,9 +177,6 @@
               </nav>
               <hr>
               <div class="field has-addons">
-                  <button type="submit" name="seeall"
-                   class="button is-primary is-outlined">Historial</button>
-                   &nbsp;&nbsp;
                   <input type="submit" class="button is-dark" name="cancel" value="Eliminar Ticket">
                   &nbsp;&nbsp;
                   <div class="control">

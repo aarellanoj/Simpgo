@@ -1,4 +1,5 @@
 simpgo_app/migrations/
+simpgo_app/media/
 simpgo_app/__pycache__/
 simpgo/__pycache__/
 *.pyc

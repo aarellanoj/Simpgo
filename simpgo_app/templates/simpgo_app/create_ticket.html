@@ -15,7 +15,7 @@
     <div class="container" style="padding:2em; margin:2em;" >
         <div class="columns">
             <div class="column is-6 is-offset-3 box">
-                <form action="" method="post">{% csrf_token %}
+                <form action="" enctype="multipart/form-data" method="post">{% csrf_token %}
                     <div class="field">
                         <label class="label" for="{{ ticket.title.id_for_label }}">{{ ticket_form.title.label }}:</label>
                         {{ticket_form.title}}
@@ -32,7 +32,7 @@
                           </div>
                         </div>
                     </div>
-                    <!-- <div class="file">
+                    <div class="file">
                         <label class="file-label">
                             {{ticket_form.image_file}}
                             <span class="file-cta">
@@ -44,7 +44,7 @@
                                 </span>
                             </span>
                         </label>
-                    </div> -->
+                    </div>
                     <hr>
                     <div class="control">
                         <input type="submit" class="button is-primary is-fullwidth" name="" value="Enviar">

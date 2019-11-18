@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from simpgo_app import views
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from . import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns, static
 
 urlpatterns = [
     path('', include('simpgo_app.urls')),
@@ -26,3 +27,4 @@ urlpatterns = [
 
 #Dejar en el Final
 urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

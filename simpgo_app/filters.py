@@ -9,7 +9,8 @@ class TicketFilter(df.FilterSet):
     created_by__user__username = df.CharFilter(lookup_expr='exact',label="Nombre del Creador")
     departments = Department.objects.all()
     created_by__department = df.ModelChoiceFilter(queryset=departments)
+    assigned_to__department = df.ModelChoiceFilter(queryset=departments)
     class Meta:
         model = Ticket
-        fields = ['id', 'title', 'assigned_to', 'status']
+        fields = ['id', 'title', 'assigned_to', 'status', 'deleted']
 

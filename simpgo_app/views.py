@@ -22,7 +22,7 @@ from simpgo_app.models import ( Ticket, Response, Profile, Department,
 def is_myticket(user,ticket):
     if (user.is_superuser 
         or user.is_staff 
-        or user.profile.is_worker()
+        or (user.profile.is_worker() and ticket.assigned_to == user.profile )
         or user.profile.id == ticket.created_by.id 
         or (user.profile.is_superviser() == ticket.created_by.department)):
         return True
@@ -78,13 +78,15 @@ def user_logout(request):
 @login_required
 def create_ticket(request):
     if request.method == 'POST':
-        ticket_form = TicketForm(data=request.POST)
+        print(request.FILES)
+        ticket_form = TicketForm(request.POST, request.FILES)
         if ticket_form.is_valid():
             ticket = ticket_form.save(commit=False)
             ticket.created_by = request.user.profile
+            ticket.save()
             ticket._assign_priority()
             ticket._assign_ticket()
-            ticket.save()
+            
             return HttpResponseRedirect('/ticket-view/' + str(ticket.id))
     else:
         ticket_form = TicketForm()
@@ -104,10 +106,10 @@ def ticket_view(request, ticket_id):
     #Verificamos el Formulario de Respuesta
     if request.method == 'POST':
 
-        print(request.POST)
+        print(request.POST,request.FILES)
         
         if request.POST.get('response') is not None:
-            response_form = ResponseForm(data=request.POST)
+            response_form = ResponseForm(request.POST,request.FILES)
             if response_form.is_valid():
                 response = response_form.save(commit=False)
                 response.user = request.user.profile
@@ -316,6 +318,9 @@ def edit_department(request,department_id):
     department = get_object_or_404(Department,pk=department_id)
     
     if request.method == 'POST':
+        
+        print(request.POST)
+        
         if request.POST.get('name') is not None:
             department.name = request.POST.get('name')
             department.save()
@@ -350,7 +355,10 @@ def edit_management(request,management_id):
     
 @worker_member_required
 def all_tickets(request):
-    tickets = Ticket.objects.filter(deleted=0,supervised=1).order_by('-created')
+    tickets = Ticket.objects.filter(assigned_to=request.user.profile,status__in=[1,2],deleted=0,supervised=1).order_by('-created')
+    
+    if request.user.is_staff:
+        tickets = Ticket.objects.filter(supervised=1).order_by('-created')
     
     #Filtro
     ticket_filter = TicketFilter(request.GET,queryset=tickets)

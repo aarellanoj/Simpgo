@@ -6,17 +6,17 @@ from .models import Profile, Ticket, Response, Management, Department
 
 
 #Class Forms
-class UserForm(forms.ModelForm):
+class UserForm(forms.ModelForm):    
     class Meta():
         model = User
         fields = ('username','first_name','last_name','password','email')
 
         widgets = {
-            'username': forms.TextInput(attrs={'class':'input'}),
-            'first_name': forms.TextInput(attrs={'class':'input'}),
-            'last_name': forms.TextInput(attrs={'class':'input'}),
+            'username': forms.TextInput(attrs={'class':'input','required':'True','oninput':'let p = this.selectionStart; this.value = this.value.toLowerCase();this.setSelectionRange(p, p);'}),
+            'first_name': forms.TextInput(attrs={'class':'input','required':'True', 'oninput':'let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);'}),
+            'last_name': forms.TextInput(attrs={'class':'input','required':'True', 'oninput':'let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);'}),
             'password': forms.PasswordInput(attrs={'class':'input'}),
-            'email': forms.EmailInput(attrs={'class':'input'}),
+            'email': forms.EmailInput(attrs={'class':'input','required':'True'}),
         }
 
         labels = {

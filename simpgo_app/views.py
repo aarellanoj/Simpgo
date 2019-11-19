@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse
+from django import forms
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -208,10 +209,16 @@ def account(request,user_id):
     account = get_object_or_404(User,pk=user_id)
 
     if request.method == 'POST':
-        print(request.POST)
-
+        #Cambio de Clave
+        if request.POST.get('password1') is not None:
+            pass
+        
         #Cambiar Email
-        verify = account.check_password(request.POST['password'])
+        if request.POST.get('password') is not None:
+            verify = account.check_password(request.POST['password'])
+        else:
+            verify = False
+            
         if request.user == account and verify:
             if request.POST.get('email') is not None:
                 account.email = request.POST.get('email')

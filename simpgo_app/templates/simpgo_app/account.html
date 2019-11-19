@@ -1,4 +1,17 @@
 {% extends "simpgo_app/base.html" %}
+{% load widget_tweaks %}
+{% block helpdesk_head %}
+  <script language="JavaScript">
+
+    function showPass() {
+      document.getElementById('passModal').classList.add('is-active');
+    }
+    function hidePass() {
+      document.getElementById('passModal').classList.remove('is-active');
+    }
+
+  </script>
+{% endblock %}
 {% block after_nav %}
   <section class="hero is-primary is-bold">
     <div class="hero-body">
@@ -7,7 +20,6 @@
             {{ account.get_full_name }}
         </h1>
           <h2 class="subtitle">
-            Departamento: {{ account.profile.department.name }} - Cargo: {{ account.profile.job_title }} 
           </h2>
       </div>
     </div>
@@ -18,12 +30,41 @@
     <div class="columns">
       <div class="column is-6 is-offset-3 box">
         <form enctype="multipart/form-data" action="./" method="POST">{% csrf_token %}
-          {% for field in user_form %}
+          <div class="field">
+            <label class="label" for="{{ user_form.username.id_for_label }}">{{ user_form.username.label }}:</label>
+            {% render_field user_form.username disabled=True %}
+          </div>
+          <div class="field">
+              <label class="label" for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}:</label>
+              {% render_field user_form.first_name disabled=True %}
+          </div>
+          <div class="field">
+              <label class="label" for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}:</label>
+              {% render_field user_form.last_name disabled=True %}
+          </div>
+          <div class="field">
+              <label class="label">Contraseña:</label>
+              <input  type="button" class="button is-link is-light is-fullwidth" onclick="showPass();" name="" value="Cambio de Clave">
+          </div>
+          <div class="field">
+              <label class="label" for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}:</label>
+              {{user_form.email}}
+          </div>
+          {% if not user.profile.is_worker %}
             <div class="field">
-              <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-              {{field}}
+                <label class="label" for="{{ profile_form.department.id_for_label }}">{{ profile_form.department.label }}:</label>
+                {% render_field profile_form.department class="input" disabled=True %}
             </div>
-          {% endfor %}
+            <div class="field">
+                <label class="label" for="{{ profile_form.job_title.id_for_label }}">{{ profile_form.job_title.label }}:</label>
+                {% render_field profile_form.job_title class="input" disabled=True %}
+            </div>
+            <hr>
+            <div class="field">
+                <label class="label" for="{{ user_form.password.id_for_label }}">Contraseña Para Confirmar Cambios:</label>
+                {{user_form.password}}
+            </div>
+          {% endif %}
           {% if user.profile.is_worker %}
           	{% for field in profile_form %}
           		<div class="field">
@@ -38,9 +79,42 @@
           {% endif %}
           <hr>
           <div class="control">
-              <input type="submit" class="button is-primary is-fullwidth" name="" value="Cambiar">
+              <input type="submit" class="button is-primary is-fullwidth" name="" value="Modificar">
           </div>
         </form>
+        <!-- Modal -->
+        <div class="modal" id="passModal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Formulario de Cambio de Clave</p>
+                <button class="delete" onclick="hidePass();" aria-label="close"></button>
+              </header>
+              <form action="">
+                <section class="modal-card-body">
+                    {% if not user.profile.is_worker %}
+                      <div class="field">
+                          <label class="label" for="">Contraseña Antigua:</label>
+                          <input class="input" name="password" type="password" placeholder="">
+                      </div>
+                    {% endif %}
+                    <div class="field">
+                        <label class="label" for="">Nueva Contraseña:</label>
+                        <input class="input" name="password1" type="password" placeholder="">
+                    </div>
+                    <div class="field">
+                        <label class="label" for="">Confirmar Nueva Contraseña:</label>
+                        <input class="input" name="password2" type="password" placeholder="">
+                    </div>
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button is-link">Guardar Cambios</button>
+              </form>
+
+                  <button class="button" onclick="hidePass();">Cancelar</button>
+                </footer>
+            </div>
+          </div>
     </div>
   </div>
 </div>

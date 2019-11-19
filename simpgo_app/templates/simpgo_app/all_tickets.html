@@ -24,7 +24,7 @@
   </section>
 {% endblock %}
 {% block body_body %}
-    <div class="container" style="padding:2em; margin:2em;">
+    <div class="container" style="padding:1em; margin:0.3em;">
       {% if tickets %}
       <div class="columns">
         <div class="column is-12 box">
@@ -72,7 +72,7 @@
                       <div class="control">
                         <label class="label" for="">Para Depto:</label>
                         <div class="select is-fullwidth">
-                            {% render_field filter.form.assigned_to__department %}
+                            {% render_field filter.form.description__department %}
                         </div>
                       </div>
                   </div>

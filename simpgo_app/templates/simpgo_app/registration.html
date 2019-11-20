@@ -1,4 +1,5 @@
 {% extends "simpgo_app/base.html" %}
+{% load widget_tweaks %}
 {% block body_block %}
   {% if registered %}
   <section class="hero is-primary is-fullwidth is-bold">
@@ -14,7 +15,7 @@
   {% else %}
     <div class="container" style="padding:2em; margin:2em;">
       <div class="columns">
-        <div class="column is-4 is-offset-4 box">
+        <div class="column is-6 is-offset-3 box">
           {% if user_form.errors %}
             <div class="notification is-warning">
                 <a href="./" class="delete" ></a>
@@ -24,12 +25,26 @@
           <form enctype="multipart/form-data" method="POST">{% csrf_token %}
             <p class="title" align="center">Resgistrate</p>
             <hr>
-            {% for field in user_form %}
               <div class="field">
-                <label class="label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                {{field}}
+                <label class="label" for="{{ user_form.username.id_for_label }}">{{ user_form.username.label }}:</label>
+                {% render_field user_form.username %}
               </div>
-            {% endfor %}
+              <div class="field">
+                  <label class="label" for="{{ user_form.first_name.id_for_label }}">{{ user_form.first_name.label }}:</label>
+                  {% render_field user_form.first_name %}
+              </div>
+              <div class="field">
+                  <label class="label" for="{{ user_form.last_name.id_for_label }}">{{ user_form.last_name.label }}:</label>
+                  {% render_field user_form.last_name %}
+              </div>
+              <div class="field">
+                  <label class="label">Contraseña: <font size="1px" color="grey">Debe Contener al Menos 6 Caracteres y Números</font> </label>
+                  {{user_form.password}}
+              </div>
+              <div class="field">
+                  <label class="label" for="{{ user_form.email.id_for_label }}">{{ user_form.email.label }}:</label>
+                  {{user_form.email}}
+              </div>
             <hr>
             <div class="control">
                 <input type="submit" class="button is-primary is-fullwidth" name="" value="Registrar">

@@ -15,7 +15,7 @@ class UserForm(forms.ModelForm):
             'username': forms.TextInput(attrs={'class':'input','required':'True','oninput':'let p = this.selectionStart; this.value = this.value.toLowerCase();this.setSelectionRange(p, p);'}),
             'first_name': forms.TextInput(attrs={'class':'input','required':'True', 'oninput':'let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);'}),
             'last_name': forms.TextInput(attrs={'class':'input','required':'True', 'oninput':'let p = this.selectionStart; this.value = this.value.toUpperCase();this.setSelectionRange(p, p);'}),
-            'password': forms.PasswordInput(attrs={'class':'input'}),
+            'password': forms.PasswordInput(attrs={'class':'input','pattern':'(?=.*\d)(?=.*[a-z]).{6,}'}),
             'email': forms.EmailInput(attrs={'class':'input','required':'True'}),
         }
 

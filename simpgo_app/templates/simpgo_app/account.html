@@ -90,8 +90,16 @@
                 <p class="modal-card-title">Formulario de Cambio de Clave</p>
                 <button class="delete" onclick="hidePass();" aria-label="close"></button>
               </header>
-              <form action="">
+              <form action="./" method="POST">{% csrf_token %}
                 <section class="modal-card-body">
+                    <article class="message is-primary">
+                        <div class="message-header">
+                          <p>Información</p>
+                        </div>
+                        <div class="message-body">
+                            La Clave Debe Contener al Menos <strong>6 Caracteres</strong> Entre Números Y Letras.
+                        </div>
+                    </article>                      
                     {% if not user.profile.is_worker %}
                       <div class="field">
                           <label class="label" for="">Contraseña Antigua:</label>
@@ -100,22 +108,38 @@
                     {% endif %}
                     <div class="field">
                         <label class="label" for="">Nueva Contraseña:</label>
-                        <input class="input" name="password1" type="password" placeholder="">
+                        <input class="input" id="password1" pattern="(?=.*\d)(?=.*[a-z]).{6,}" name="password1" type="password" placeholder="">
                     </div>
                     <div class="field">
                         <label class="label" for="">Confirmar Nueva Contraseña:</label>
-                        <input class="input" name="password2" type="password" placeholder="">
+                        <input class="input" id="password2" pattern="(?=.*\d)(?=.*[a-z]).{6,}" name="password2" type="password" placeholder="">
                     </div>
                 </section>
                 <footer class="modal-card-foot">
-                  <button class="button is-link">Guardar Cambios</button>
-              </form>
-
-                  <button class="button" onclick="hidePass();">Cancelar</button>
+                  <button class="button is-link is-fullwidth">Guardar Cambios</button>
                 </footer>
+              </form>
             </div>
           </div>
     </div>
   </div>
 </div>
+{% endblock %}
+{% block script %}
+  <script>
+
+    var password = document.getElementById("password1"); confirm_password = document.getElementById("password2");
+
+    function validatePassword(){
+      if(password.value != confirm_password.value) {
+        confirm_password.setCustomValidity("Contraseñas No Coinciden!");
+      } else {
+        confirm_password.setCustomValidity('');
+      }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+
+  </script>
 {% endblock %}

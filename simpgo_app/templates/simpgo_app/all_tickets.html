@@ -10,6 +10,13 @@
       }
     }
   </script>
+  <style>
+
+    ul li{
+      display: inline;
+    }
+
+  </style>
 {% endblock %}
 {% block after_nav %}
   <section class="hero is-primary is-bold">
@@ -76,15 +83,6 @@
                         </div>
                       </div>
                   </div>
-                  &nbsp;&nbsp; 
-                  <div class="field">
-                      <div class="control">
-                        <label class="label" for="">Estatus:</label>
-                        <div class="select is-fullwidth">
-                            {% render_field filter.form.status %}
-                        </div>
-                      </div>
-                  </div>
                   &nbsp;&nbsp;
                   <div class="field">
                       <div class="control">
@@ -101,6 +99,19 @@
                     <button type="submit" class="button is-info">Filtrar</button>
                   </p>
               </div>
+
+              {% if user.is_staff %}  
+              <div class="field is-grouped">
+                <div class="field">
+                    <div class="control">
+                      <label class="label" for="">Estatus:</label>
+                      {% render_field filter.form.status %}
+                    </div>
+                </div>
+                &nbsp;&nbsp;
+              </div>
+              {% endif %}
+              <hr>
             </form>
 
             <form method="POST" action="{% url 'all_tickets' %}">{% csrf_token %}

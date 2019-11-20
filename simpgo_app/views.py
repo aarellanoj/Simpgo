@@ -209,16 +209,23 @@ def account(request,user_id):
     account = get_object_or_404(User,pk=user_id)
 
     if request.method == 'POST':
-        #Cambio de Clave
-        if request.POST.get('password1') is not None:
-            pass
-        
-        #Cambiar Email
+        #Cambiar
         if request.POST.get('password') is not None:
             verify = account.check_password(request.POST['password'])
         else:
             verify = False
-            
+        
+        #Cambio de Clave
+        if request.POST.get('password1') is not None:
+            if request.user.profile.is_worker():
+                account.set_password(request.POST.get('password1'))
+                account.save()
+            elif verify:
+                account.set_password(request.POST.get('password1'))
+                account.save()
+            else:
+                pass
+                
         if request.user == account and verify:
             if request.POST.get('email') is not None:
                 account.email = request.POST.get('email')

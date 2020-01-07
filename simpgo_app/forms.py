@@ -64,11 +64,10 @@ class ResponseForm(forms.ModelForm):
 class ManagementForm(forms.ModelForm):
     class Meta():
         model = Management
-        fields = '__all__'
+        fields = ('name',)
         
         widgets = {
             'name': forms.TextInput(attrs={'class':'input','placeholder':'Nombre de la Dirección'}),
-            'management_chief' : forms.Select(),
         }
         
 class DepartmentForm(forms.ModelForm):

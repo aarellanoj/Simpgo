@@ -29,6 +29,14 @@ def is_myticket(user,ticket):
         return True
     else:
         return False
+    
+def is_your_profile(user,account):
+    if (user.is_superuser
+        or user.is_staff
+        or user.profile == account.profile):
+        return True
+    else:
+        return False
 
 # Create your views here.
 def index(request):
@@ -207,6 +215,8 @@ def my_tickets_history(request):
 @login_required
 def account(request,user_id):
     account = get_object_or_404(User,pk=user_id)
+    if not is_your_profile(request.user, account):
+        raise PermissionDenied()
 
     if request.method == 'POST':
         #Cambiar
@@ -279,7 +289,7 @@ def account(request,user_id):
 def users(request):
     users = [x for x in User.objects.all() if(hasattr(x,'profile'))]
     user_without_profile = [x for x in User.objects.all() if(not hasattr(x,'profile'))]
-
+    
     #Creando Paginador
     paginator = Paginator(users,15)
     page = request.GET.get('page')
@@ -309,6 +319,9 @@ def create_department(request):
             department_form.save()
             return HttpResponseRedirect(reverse('departments'))
     else:
+        users = Profile.objects.all()
+        departments_chiefs = Profile.objects.filter(id__in=[user.id for user in users if not user.is_superviser()])
+        DepartmentForm.base_fields['department_chief'] = forms.ModelChoiceField(queryset=departments_chiefs)
         department_form = DepartmentForm()
         
     return render(request, 'simpgo_app/create_edit_department.html',
@@ -345,10 +358,13 @@ def edit_department(request,department_id):
             department.department_chief = get_object_or_404(Profile,pk=request.POST.get('department_chief'))
             department.save()
         return HttpResponseRedirect(reverse('departments'))
-        
+    
+    users = Profile.objects.all()
+    departments_chiefs = Profile.objects.filter(id__in=[user.id for user in users if not user.is_superviser()],department=department)
+    DepartmentForm.base_fields['department_chief'] = forms.ModelChoiceField(queryset=departments_chiefs)
     department_form = DepartmentForm(instance=department)
     return render(request, 'simpgo_app/create_edit_department.html',
-                 {'department_form':department_form,})
+                 {'department_form':department_form,'department':department})
 
 @staff_member_required
 def edit_management(request,management_id):
@@ -357,9 +373,6 @@ def edit_management(request,management_id):
     if request.method == 'POST':
         if request.POST.get('name') is not None:
             management.name = request.POST.get('name')
-            management.save()
-        if request.POST.get('management_chief') is not None:
-            management.management_chief = get_object_or_404(Profile,pk=request.POST.get('management_chief'))
             management.save()
         return HttpResponseRedirect(reverse('departments'))
     

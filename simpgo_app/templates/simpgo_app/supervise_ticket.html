@@ -14,7 +14,7 @@
 {% endblock %}
 {% block body_body %}
 {% if tickets_sup %}
-  <div class="container" style="padding:2em; margin:2em;">
+  <div class="container" style="padding:2em; margin:2em; width: auto; min-height: calc(100vh - 84px - 168px);">
       <div class="columns">
         <div class="column is-8 is-offset-2">
           <center>
@@ -67,9 +67,11 @@
       {% endif %}
 
       {% if not tickets_sup %}
+        <div style="width: auto; min-height: calc(100vh - 84px - 168px);">
           <div class="notification is-primary is-fullwidth is-fullheight" style="padding:2em; margin:2em;">
             <h3 class="is-title is-3">Felicidades no tienes ningun Ticket para Supervisión.</h3>
           </div>
+        </div>
       {% endif %}
     </div>
 {% endblock %}

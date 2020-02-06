@@ -1,6 +1,6 @@
 {% extends 'simpgo_app/base.html' %}
 {% block body_block %}
-  <div class="container" style="padding:2em; margin:2em;">
+  <div class="container" style="padding:2em; margin:2em;width: auto; min-height: calc(100vh - 84px - 168px);">
     <div class="columns">
         <div class="column is-4 is-offset-4 box">
             <form method="post" action="{% url 'user_login' %}">{% csrf_token %}

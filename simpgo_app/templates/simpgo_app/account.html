@@ -26,7 +26,7 @@
   </section>
 {% endblock %}
 {% block body_block %}
-  <div class="container" style="padding:2em; margin:2em;">
+  <div class="container" style="padding:2em; margin:2em; width: auto; min-height: calc(100vh - 84px - 168px);">
     <div class="columns">
       <div class="column is-6 is-offset-3 box">
         <form enctype="multipart/form-data" action="./" method="POST">{% csrf_token %}

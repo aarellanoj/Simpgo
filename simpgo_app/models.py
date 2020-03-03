@@ -1,7 +1,7 @@
+# pylint: skip-file
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
-
 
 def ticket_directory_path(instance, filename):
     return 'ticket-images/ticket_{0}_images/image_{1}'.format(instance.id, filename)
@@ -81,7 +81,6 @@ class Job_Titles(models.Model):
 
     def __str__(self):
         return self.job_title
-
 
 DEFAULT_RANK_ID = 1
 class Profile(models.Model):
